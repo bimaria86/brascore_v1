@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BraSCORE — Brazilian System for Cardiac Operative Risk Evaluation</title>
+<meta name="description" content="O primeiro escore brasileiro de risco para cirurgia de revascularização miocárdica. Coorte multicêntrica nacional conduzida pelo InCor-HCFMUSP.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue:#3B4FD8; --teal:#1D9E75; --grad: linear-gradient(135deg,#5B3FD8 0%,#1D9E75 100%);
+    --dark:#111827; --mid:#374151; --muted:#6B7280; --light:#F9FAFB; --border:#E5E7EB;
+    --warn-bg:#FFF9E6; --warn-bd:#EF9F27; --warn-tx:#633806;
+    --sans:'IBM Plex Sans',sans-serif; --serif:'Lora',serif;
+    --r:8px; --rl:12px; --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);font-size:16px;line-height:1.6;color:var(--dark);background:#fff;-webkit-font-smoothing:antialiased}
+  img{max-width:100%;height:auto;display:block}
+  a{color:var(--blue);text-decoration:none;transition:opacity .2s}
+  a:hover{opacity:.8}
+  h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.2;color:var(--dark)}
+  h1{font-size:clamp(1.9rem,4vw,2.8rem)}
+  h2{font-size:clamp(1.3rem,2.6vw,1.8rem);margin-bottom:.5rem}
+  h3{font-size:1.1rem}
+  p{margin-bottom:1rem;color:var(--mid)}
+
+  /* Layout */
+  .wrap{width:100%;max-width:1080px;margin:0 auto;padding:0 1.5rem}
+  section{padding:4rem 0}
+  .alt{background:var(--light)}
+  .label{display:inline-block;font-size:11px;font-weight:600;color:var(--blue);letter-spacing:.14em;text-transform:uppercase;margin-bottom:.5rem}
+
+  /* Header */
+  header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+  .hd{display:flex;align-items:center;justify-content:space-between;height:64px;gap:1rem}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:600;font-size:1.15rem;color:var(--dark)}
+  .brand img{height:34px;width:auto}
+  nav.menu{display:flex;gap:.2rem;flex-wrap:wrap}
+  nav.menu a{font-size:13px;color:var(--mid);padding:6px 10px;border-radius:6px}
+  nav.menu a:hover{background:var(--light);color:var(--dark);opacity:1}
+  .burger{display:none;background:none;border:none;cursor:pointer;padding:6px}
+  .burger span{display:block;width:22px;height:2px;background:var(--dark);margin:5px 0;border-radius:2px}
+
+  /* Hero */
+  .hero{padding:5rem 0 4rem;border-bottom:1px solid var(--border)}
+  .hero-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:3rem;align-items:center}
+  .badge{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:500;color:var(--blue);background:#EEF0FD;padding:5px 14px;border-radius:20px;margin-bottom:1rem;letter-spacing:.04em}
+  .badge .dot{width:6px;height:6px;background:var(--blue);border-radius:50%}
+  .hero h1 em{font-style:italic;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero p.lead{font-size:15px;font-weight:300;color:var(--muted);line-height:1.8;margin:1rem 0 2rem;max-width:480px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:2rem}
+  .btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;padding:11px 22px;border-radius:var(--r);border:1.5px solid transparent;cursor:pointer;transition:all .2s;font-family:inherit}
+  .btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .btn-primary:hover{background:#2d3fc7;opacity:1}
+  .btn-outline{background:#fff;color:var(--dark);border-color:var(--border)}
+  .btn-outline:hover{background:var(--light);opacity:1}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;padding-top:2rem;border-top:1px solid var(--border)}
+  .stat-num{font-family:var(--serif);font-size:1.7rem;font-weight:600;color:var(--dark);line-height:1}
+  .stat-lb{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+  .hero-card{background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:1.4rem 1.6rem;box-shadow:var(--shadow)}
+  .hero-card .lb{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+  .hero-card .v{font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--blue)}
+  .hero-card .sub{font-size:12px;color:var(--muted);margin-top:4px}
+  .mini-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+
+  /* Cards / lists */
+  .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .card{background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;box-shadow:var(--shadow)}
+  .card h3{margin-bottom:.4rem}
+  .card .role{font-size:12px;color:var(--blue);font-weight:500;margin-bottom:.6rem}
+  .card p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:0}
+
+  /* Calculadora — Em Breve */
+  .coming{background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:3rem 2rem;text-align:center;box-shadow:var(--shadow)}
+  .coming .pill{display:inline-flex;align-items:center;gap:8px;background:var(--warn-bg);color:var(--warn-tx);padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:1.2rem}
+  .coming .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--warn-bd)}
+  .coming h3{font-size:1.5rem;margin-bottom:.8rem}
+  .coming p{max-width:520px;margin:0 auto 1.5rem;font-size:14px;color:var(--muted);line-height:1.8}
+  .disclaimer{font-size:12px;color:var(--muted);background:var(--warn-bg);border-left:3px solid var(--warn-bd);border-radius:0 var(--r) var(--r) 0;padding:1rem 1.2rem;line-height:1.7;text-align:left;margin-top:2rem}
+
+  /* Timeline */
+  .tl{display:flex;flex-direction:column;gap:0;margin-top:1.5rem}
+  .tl-it{display:grid;grid-template-columns:120px 1fr;gap:1rem;padding:.8rem 0;border-bottom:1px dashed var(--border)}
+  .tl-it:last-child{border-bottom:none}
+  .tl-yr{font-size:12px;font-weight:600;color:var(--blue)}
+  .tl-ev{font-size:14px;color:var(--dark);font-weight:500}
+  .tl-de{font-size:12px;color:var(--muted);margin-top:3px}
+
+  /* Pubs */
+  .pub{display:grid;grid-template-columns:80px 1fr;gap:1rem;padding:1.2rem;background:#fff;border:1px solid var(--border);border-radius:var(--rl);margin-bottom:.8rem}
+  .pub .yr{font-size:12px;font-weight:600;color:#fff;background:var(--blue);padding:4px 10px;border-radius:4px;align-self:start;text-align:center}
+  .pub h3{font-size:14px;margin-bottom:.3rem}
+  .pub .au{font-size:13px;color:var(--muted);margin-bottom:2px}
+  .pub .jr{font-size:12px;color:var(--blue);font-style:italic}
+  .pub .doi{font-size:11px;color:var(--muted);margin-top:6px}
+
+  /* Form */
+  form{background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:2rem;box-shadow:var(--shadow)}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field label{font-size:12px;font-weight:500;color:var(--mid)}
+  .field input,.field select,.field textarea{font:14px var(--sans);padding:10px 12px;border:1px solid var(--border);border-radius:var(--r);background:var(--light);color:var(--dark);outline:none;transition:border-color .2s}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);background:#fff}
+  .field textarea{resize:vertical;min-height:100px}
+  .checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.5rem;margin:.5rem 0 1rem}
+  .checks label,.lgpd{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--mid);line-height:1.6}
+  .lgpd{padding:1rem;background:var(--light);border-radius:var(--r);margin:1rem 0}
+  .submit{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font:500 15px var(--sans);cursor:pointer;transition:background .2s;margin-top:.5rem}
+  .submit:hover{background:#2d3fc7}
+
+  /* Footer */
+  footer{background:#0D1117;color:#6B7280;padding:3rem 0 2rem;font-size:13px}
+  .ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem;padding-bottom:2rem;border-bottom:1px solid #1F2937;margin-bottom:1.5rem}
+  .ft-brand{font-family:var(--serif);font-size:1.1rem;font-weight:600;color:#fff;margin-bottom:.6rem}
+  footer h4{font-family:var(--sans);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#9CA3AF;margin-bottom:.8rem}
+  footer ul{list-style:none}
+  footer ul li{margin-bottom:6px}
+  footer a{color:#6B7280}
+  footer a:hover{color:#fff;opacity:1}
+  .ft-bot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:12px;color:#4B5563}
+
+  /* Responsivo */
+  @media (max-width:768px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-visual{display:none}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .frow{grid-template-columns:1fr}
+    .ft-grid{grid-template-columns:1fr}
+    nav.menu{display:none}
+    .burger{display:block}
+    nav.menu.open{display:flex;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);padding:1rem 1.5rem;gap:.5rem}
+    .tl-it{grid-template-columns:90px 1fr}
+    .pub{grid-template-columns:60px 1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="wrap hd">
+    <a href="#topo" class="brand">
+      <img src="LOGO Final BraSCORE.png" alt="BraSCORE">
+      <span>BraSCORE</span>
+    </a>
+    <nav class="menu" id="menu">
+      <a href="#sobre">O BraSCORE</a>
+      <a href="#calculadora">Calculadora</a>
+      <a href="#comite">Comitê</a>
+      <a href="#documentos">Documentos</a>
+      <a href="#publicacoes">Publicações</a>
+      <a href="#parcerias">Parcerias</a>
+      <a href="#cadastro">Cadastro</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <button class="burger" aria-label="Menu" onclick="document.getElementById('menu').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="topo">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="badge"><span class="dot"></span> Coorte multicêntrica brasileira · 2024–2026</span>
+      <span class="badge" style="background:#E1F5EE;color:#085041;margin-left:6px"><span class="dot" style="background:var(--teal)"></span> Parceiro EuroSCORE 3 · Royal Papworth (UK)</span>
+      <h1>O primeiro <em>escore brasileiro</em> de risco para CRM</h1>
+      <p class="lead">
+        Uma coorte multicêntrica nacional para estratificar o risco de mortalidade após
+        cirurgia de revascularização miocárdica e impulsionar a melhoria contínua dos
+        programas de cirurgia cardíaca no Brasil.
+      </p>
+      <div class="actions">
+        <a href="#sobre" class="btn btn-primary">Conheça o projeto →</a>
+        <a href="#cadastro" class="btn btn-outline">Cadastre-se</a>
+      </div>
+      <div class="stats">
+        <div><div class="stat-num">36</div><div class="stat-lb">Centros participantes</div></div>
+        <div><div class="stat-num">29</div><div class="stat-lb">Coletando ativamente</div></div>
+        <div><div class="stat-num">2.257</div><div class="stat-lb">Cirurgias</div></div>
+        <div><div class="stat-num">5</div><div class="stat-lb">Regiões do Brasil</div></div>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:.8rem;letter-spacing:.04em">Dados atualizados em abril/2026 · Registro internacional <a href="https://clinicaltrials.gov/study/NCT07293533" target="_blank" rel="noopener" style="color:var(--blue)">ClinicalTrials.gov NCT07293533</a></p>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="lb">Calculadora BraSCORE</div>
+        <div class="v">Em Breve</div>
+        <div class="sub">Modelo final em desenvolvimento e validação</div>
+      </div>
+      <div class="mini-row">
+        <div class="hero-card">
+          <div class="lb">Período</div>
+          <div class="v" style="font-size:1.1rem">2024 – 2026</div>
+          <div class="sub">Coleta nacional</div>
+        </div>
+        <div class="hero-card">
+          <div class="lb">CEP</div>
+          <div class="v" style="font-size:1.1rem">7.933.450</div>
+          <div class="sub">Aprovação ética</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- O BRASCORE -->
+<section id="sobre">
+  <div class="wrap">
+    <span class="label">História do projeto</span>
+    <h2>O BraSCORE</h2>
+    <p>
+      O BraSCORE — <em>Brazilian System for Cardiac Operative Risk Evaluation</em> — é uma
+      coorte multicêntrica brasileira que coleta dados clínicos detalhados de pacientes
+      submetidos à cirurgia de revascularização miocárdica (CRM) isolada, com o objetivo de
+      desenvolver o primeiro escore de risco prognóstico nacional. Estudo observacional,
+      multicêntrico, conduzido pela Divisão de Cirurgia Cardiovascular do
+      <strong>InCor-HCFMUSP</strong>, entre abril de 2024 e abril de 2026.
+    </p>
+    <p>
+      A ideia foi semeada em 2012, no editorial <em>"O risco dos escores de risco e o sonho
+      pelo BraSCORE"</em> (Mejía & Lisboa, BJCVS). A experiência do <strong>REPLICCAR</strong>
+      (FAPESP/Harvard) deu a base metodológica e a maturidade da equipe para um registro
+      nacional. Em 2022, o programa <strong>QualiSUS-Cardio</strong> tornou o ressarcimento
+      hospitalar dependente de desfechos clínicos — sem ajuste ao risco, hospitais que atendem
+      pacientes mais graves seriam injustamente penalizados. O BraSCORE oferece a base
+      científica nacional para esse ajuste.
+    </p>
+    <p>
+      O projeto é aprovado pelo <strong>Comitê de Ética em Pesquisa do HC-FMUSP</strong>
+      (parecer CEP nº 7.933.450) e está registrado internacionalmente no
+      <a href="https://clinicaltrials.gov/study/NCT07293533" target="_blank" rel="noopener"><strong>ClinicalTrials.gov sob o identificador NCT07293533</strong></a>,
+      garantindo transparência metodológica e padrão internacional de pesquisa clínica.
+    </p>
+    <p>
+      Em junho de 2025, o BraSCORE firmou parceria internacional com o
+      <strong>Royal Papworth Hospital NHS Foundation Trust</strong> (Cambridge, Reino Unido),
+      instituição que desenvolve e mantém o EuroSCORE. Pelo acordo, o BraSCORE contribui com
+      dados anonimizados de cirurgias para a recalibração do modelo europeu na nova versão —
+      o <strong>EuroSCORE 3</strong>. O Brasil passa a integrar a rede global de parceiros do
+      registro internacional de risco em cirurgia cardíaca.
+    </p>
+
+    <h3 style="margin-top:2rem;font-family:var(--sans);font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);font-weight:600">Linha do tempo</h3>
+    <div class="tl">
+      <div class="tl-it"><div class="tl-yr">2012</div><div><div class="tl-ev">Editorial seminal</div><div class="tl-de">Mejía & Lisboa publicam no BJCVS o sonho do escore brasileiro.</div></div></div>
+      <div class="tl-it"><div class="tl-yr">2013–2020</div><div><div class="tl-ev">REPLICCAR</div><div class="tl-de">Registro Paulista (FAPESP/Harvard) — base metodológica do BraSCORE.</div></div></div>
+      <div class="tl-it"><div class="tl-yr">2022</div><div><div class="tl-ev">QualiSUS-Cardio</div><div class="tl-de">Portaria GM/MS nº 1.100 — ressarcimento por desfechos.</div></div></div>
+      <div class="tl-it"><div class="tl-yr">Mai/2023</div><div><div class="tl-ev">49º SBCCV — Maceió</div><div class="tl-de">Conferência "Estratificação de risco em CRM no Brasil: CABG-BraSCORE" — início da trajetória pública do projeto.</div></div></div>
+      <div class="tl-it"><div class="tl-yr">Abr/2024</div><div><div class="tl-ev">Início da coleta</div><div class="tl-de">Primeiros casos registrados no projeto BraSCORE.</div></div></div>
+      <div class="tl-it"><div class="tl-yr">Jun/2025</div><div><div class="tl-ev">Parceria internacional com o EuroSCORE 3</div><div class="tl-de">Acordo firmado com o Royal Papworth Hospital (UK) em 12/jun/2025: o BraSCORE passa a integrar a rede global de parceiros do EuroSCORE.</div></div></div>
+      <div class="tl-it"><div class="tl-yr">Jul/2025</div><div><div class="tl-ev">Primeiro Relatório</div><div class="tl-de">1.039 cirurgias coletadas em 19 instituições no primeiro ano.</div></div></div>
+      <div class="tl-it"><div class="tl-yr">Ago/2025</div><div><div class="tl-ev">1ª Reunião do Comitê Científico</div><div class="tl-de">14 de agosto de 2025 — apresentação do Primeiro Relatório aos pesquisadores.</div></div></div>
+      <div class="tl-it"><div class="tl-yr">Mar/2026</div><div><div class="tl-ev">2ª Reunião do Comitê</div><div class="tl-de">Definições metodológicas do BraSCORE v1.</div></div></div>
+      <div class="tl-it"><div class="tl-yr">Abr/2026</div><div><div class="tl-ev">2.257 procedimentos coletados</div><div class="tl-de">29 centros ativos coletando entre os 36 participantes; análise preliminar concluída.</div></div></div>
+      <div class="tl-it"><div class="tl-yr">Jun/2026</div><div><div class="tl-ev">52º SBCCV — João Pessoa</div><div class="tl-de">Apresentação sobre representatividade nacional via DATASUS.</div></div></div>
+      <div class="tl-it"><div class="tl-yr">2026</div><div><div class="tl-ev">Modelo final</div><div class="tl-de">Encerramento da coleta e construção do escore brasileiro.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULADORA -->
+<section class="alt" id="calculadora">
+  <div class="wrap">
+    <span class="label">Calculadora BraSCORE</span>
+    <h2>Estimativa de risco operatório</h2>
+    <p style="max-width:640px">
+      Estimativa de risco para mortalidade operatória após CRM isolada. O modelo final está em
+      fase de desenvolvimento e validação a partir das 147 variáveis coletadas pelo registro.
+    </p>
+
+    <div class="coming" style="margin-top:1.5rem">
+      <span class="pill">Em Breve</span>
+      <h3>Calculadora em desenvolvimento</h3>
+      <p>
+        Quando o modelo final do BraSCORE for publicado, a calculadora será disponibilizada
+        nesta página. Cadastre-se abaixo para ser notificada quando estiver no ar.
+      </p>
+      <a href="#cadastro" class="btn btn-primary">Quero ser notificado</a>
+
+      <div class="disclaimer">
+        <strong>Aviso médico:</strong> a Calculadora BraSCORE será uma ferramenta de apoio à
+        decisão clínica. Não substitui o julgamento médico, a avaliação individualizada do
+        paciente nem a relação médico-paciente. Os autores e o InCor-HCFMUSP não se
+        responsabilizam por decisões clínicas tomadas com base exclusiva nos resultados.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMITÊ -->
+<section id="comite">
+  <div class="wrap">
+    <span class="label">Governança científica</span>
+    <h2>Comitê Científico</h2>
+    <p>
+      O Comitê Científico do BraSCORE reúne pesquisadores e cirurgiões cardiovasculares de
+      instituições de referência do Brasil, dedicados à construção, validação e disseminação
+      do escore nacional.
+    </p>
+
+    <h3 style="font-family:var(--sans);font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);font-weight:600;margin-top:2rem">Coordenação</h3>
+    <div class="grid-3" style="margin-top:1rem">
+      <div class="card">
+        <h3>Dr. Omar A. V. Mejía</h3>
+        <div class="role">Pesquisador Responsável</div>
+        <p>Cirurgião cardiovascular do InCor-HCFMUSP. Idealizador do BraSCORE e coordenador do REPLICCAR (FAPESP/Harvard). Autor do editorial fundador no BJCVS (2012).</p>
+      </div>
+      <div class="card">
+        <h3>Bianca M. Maglia Orlandi</h3>
+        <div class="role">Pesquisadora Executante</div>
+        <p>Enfermeira, PhD, pesquisadora do InCor-HCFMUSP. Coordenadora executiva do BraSCORE — operação multicêntrica, treinamento, auditorias e análise de dados. Primeira autora do REPLICCAR II (PLoS ONE, 2020).</p>
+      </div>
+      <div class="card">
+        <h3>Camila Perez de Souza Arthur</h3>
+        <div class="role">Revisão</div>
+        <p>Pesquisadora colaboradora pela Beneficência Portuguesa de São Paulo. Atua na revisão de dados, consistência dos registros e suporte metodológico do projeto.</p>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--sans);font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);font-weight:600;margin-top:3rem">Centros participantes e cirurgiões responsáveis</h3>
+    <p style="font-size:13px;color:var(--muted);margin-top:.5rem">
+      36 centros nas 5 regiões do Brasil. Os representantes marcados com <strong style="color:var(--blue)">★</strong> integram o Comitê Científico do projeto.
+    </p>
+
+    <div style="margin-top:1.5rem">
+      <!-- SUDESTE -->
+      <div style="margin-bottom:1.8rem">
+        <h4 style="font-family:var(--serif);font-size:1.1rem;color:var(--dark);padding-bottom:.4rem;border-bottom:2px solid var(--border);margin-bottom:.8rem">Sudeste</h4>
+        <ul style="list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.5rem .8rem;font-size:13px;color:var(--mid)">
+          <li><strong>InCor-HCFMUSP (SP)</strong> — Omar Mejía <span style="color:var(--blue)">★</span></li>
+          <li><strong>Beneficência Portuguesa de SP</strong> — Camila P. S. Arthur <span style="color:var(--blue)">★</span></li>
+          <li><strong>Santa Casa de São Paulo (SP)</strong> — Valquiria Pelisser <span style="color:var(--blue)">★</span></li>
+          <li><strong>Santa Casa de Marília (SP)</strong> — Marcos Gradin Tiveron <span style="color:var(--blue)">★</span></li>
+          <li><strong>Instituto Dante Pazzanese (SP)</strong> — Mario Issa</li>
+          <li><strong>Hospital de Base — FAMERP (SJRP, SP)</strong> — Marcelo Arruda Nakazone</li>
+          <li><strong>HC FMRP-USP (Ribeirão Preto, SP)</strong> — Alfredo Rodrigues</li>
+          <li><strong>HUSF (Bragança Paulista, SP)</strong> — Murillo de Oliveira Antunes</li>
+          <li><strong>Hospital Regional de Jundiaí / Sírio-Libanês (SP)</strong> — Roberto Rocha Costa e Silva</li>
+          <li><strong>Hospital São Vicente de Paulo (Jundiaí, SP)</strong> — Alexandre Zilli</li>
+          <li><strong>Santa Casa de Piracicaba (SP)</strong> — Rafael Angelo Tineli</li>
+          <li><strong>HC UFMG (MG)</strong> — Cláudio Gelape</li>
+          <li><strong>Hospital Life Center (MG)</strong> — Gabriela Zamunaro Lopes Ruiz</li>
+          <li><strong>Instituto Nacional de Cardiologia (RJ)</strong> — Rodrigo Segalote <span style="color:var(--blue)">★</span></li>
+          <li><strong>HU Pedro Ernesto — UERJ (RJ)</strong> — Henrique Madureira da Rocha Coutinho</li>
+          <li><strong>Hospital São Francisco na Providência de Deus (RJ)</strong> — Ulisses da Silva Alves</li>
+        </ul>
+      </div>
+
+      <!-- SUL -->
+      <div style="margin-bottom:1.8rem">
+        <h4 style="font-family:var(--serif);font-size:1.1rem;color:var(--dark);padding-bottom:.4rem;border-bottom:2px solid var(--border);margin-bottom:.8rem">Sul</h4>
+        <ul style="list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.5rem .8rem;font-size:13px;color:var(--mid)">
+          <li><strong>Instituto de Cardiologia do RS (Porto Alegre)</strong> — Renato Kalil <span style="color:var(--blue)">★</span></li>
+          <li><strong>Hospital Divina Providência (RS)</strong> — Renato Kalil <span style="color:var(--blue)">★</span></li>
+          <li><strong>Hospital N. Sra. da Conceição (RS)</strong> — Felipe Bonsu Salles</li>
+          <li><strong>Hospital Santa Casa de Curitiba (PR)</strong> — Carolina Limongi</li>
+          <li><strong>Hospital Marieta Konder Bornhausen (Itajaí, SC)</strong> — Maykon Madeira <span style="color:var(--blue)">★</span></li>
+          <li><strong>Hospital Cônsul Carlos Renaux (Brusque, SC)</strong> — Maykon Madeira <span style="color:var(--blue)">★</span></li>
+          <li><strong>Hospital São Vicente de Paulo (Mafra, SC)</strong> — Raul A. Micalay Paredes</li>
+        </ul>
+      </div>
+
+      <!-- NORDESTE -->
+      <div style="margin-bottom:1.8rem">
+        <h4 style="font-family:var(--serif);font-size:1.1rem;color:var(--dark);padding-bottom:.4rem;border-bottom:2px solid var(--border);margin-bottom:.8rem">Nordeste</h4>
+        <ul style="list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.5rem .8rem;font-size:13px;color:var(--mid)">
+          <li><strong>IMIP (PE)</strong> — Fernando Augusto M. dos S. Figueira <span style="color:var(--blue)">★</span></li>
+          <li><strong>Hospital Dom Helder Câmara (PE)</strong> — Luis Rafael P. Cavalcante</li>
+          <li><strong>PROCAPE (PE)</strong> — Alexandre Mota de Menezes</li>
+          <li><strong>Hospital do Coração Alagoano — Adib Jatene (AL)</strong> — Diego Pereira Gregório de Andrade</li>
+          <li><strong>Hospital Alberto Urquiza Wanderley (PB)</strong> — Maurílio / J. Calixto Filho / Thiago Vilanova <span style="color:var(--blue)">★</span></li>
+          <li><strong>Hospital de Cirurgia (SE)</strong> — Leila Nogueira Ferreira de Barros <span style="color:var(--blue)">★</span></li>
+          <li><strong>HU UFMA (MA)</strong> — Vinícius Nina</li>
+          <li><strong>Hospital Carlos A. Studart Messejana (CE)</strong> — Fátima Rosane de Almeida Oliveira</li>
+        </ul>
+      </div>
+
+      <!-- NORTE -->
+      <div style="margin-bottom:1.8rem">
+        <h4 style="font-family:var(--serif);font-size:1.1rem;color:var(--dark);padding-bottom:.4rem;border-bottom:2px solid var(--border);margin-bottom:.8rem">Norte</h4>
+        <ul style="list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.5rem .8rem;font-size:13px;color:var(--mid)">
+          <li><strong>Hospital Beneficente Portuguesa de Belém (PA)</strong> — Gustavo Pampolha Guerreiro <span style="color:var(--blue)">★</span></li>
+          <li><strong>Hospital Dom Orione (TO)</strong> — Flávio Tonon</li>
+        </ul>
+      </div>
+
+      <!-- CENTRO-OESTE -->
+      <div style="margin-bottom:.5rem">
+        <h4 style="font-family:var(--serif);font-size:1.1rem;color:var(--dark);padding-bottom:.4rem;border-bottom:2px solid var(--border);margin-bottom:.8rem">Centro-Oeste</h4>
+        <ul style="list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.5rem .8rem;font-size:13px;color:var(--mid)">
+          <li><strong>Hospital Geral de Cuiabá (MT)</strong> — Gibran Roder Feguri <span style="color:var(--blue)">★</span></li>
+          <li><strong>Inst. de Cardiologia e Transplantes do DF</strong> — Elson Borges Lima <span style="color:var(--blue)">★</span></li>
+          <li><strong>Hospital Ruy Azeredo (GO)</strong> — Fernando Silvério</li>
+        </ul>
+      </div>
+    </div>
+
+    <p style="margin-top:2rem;font-size:13px;color:var(--muted);background:var(--light);padding:1rem 1.2rem;border-radius:var(--r);border-left:3px solid var(--blue)">
+      <strong>1ª Reunião do Comitê Científico:</strong> 14 de agosto de 2025 — apresentação do
+      Primeiro Relatório do projeto. <strong>2ª Reunião:</strong> março de 2026 — definições
+      metodológicas do BraSCORE v1.
+    </p>
+  </div>
+</section>
+
+<!-- DOCUMENTOS -->
+<section class="alt" id="documentos">
+  <div class="wrap">
+    <span class="label">Documentação técnica</span>
+    <h2>Documentos Técnicos</h2>
+    <p>Documentação científica do projeto, disponível para consulta e citação.</p>
+
+    <div class="grid-3" style="margin-top:1.5rem">
+      <div class="card">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">PDF · Jan/2026</div>
+        <h3>Projeto de Pesquisa BraSCORE — v10.0</h3>
+        <p>Documento completo: introdução, objetivos, métodos, plano estatístico, cronograma e referências.</p>
+        <a href="v10_PROJETO_BraSCORE.pdf" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:1rem;font-size:13px;padding:8px 16px">Baixar PDF</a>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">PDF · Jul/2025</div>
+        <h3>Primeiro Relatório do BraSCORE — 2025</h3>
+        <p>Resultados parciais do primeiro ano: 19 instituições ativas, 1.039 cirurgias, perfil epidemiológico, comparação com EuroSCORE II e STS.</p>
+        <a href="FIRSTREPORT_BRASCORE2025.pdf" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:1rem;font-size:13px;padding:8px 16px">Baixar PDF</a>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">PDF · Jun/2026</div>
+        <h3>Resumo SBCCV 2026</h3>
+        <p>Apresentação no 52º Congresso da SBCCV (João Pessoa): comparação entre dados administrativos e clínicos via DATASUS.</p>
+        <a href="2026_SBCCV_BraSCORE.pdf" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:1rem;font-size:13px;padding:8px 16px">Baixar PDF</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PUBLICAÇÕES -->
+<section id="publicacoes">
+  <div class="wrap">
+    <span class="label">Produção científica</span>
+    <h2>Publicações</h2>
+    <p>Publicações do BraSCORE e dos estudos que o antecederam, com destaque para o REPLICCAR.</p>
+
+    <div style="margin-top:1.5rem">
+      <div class="pub">
+        <span class="yr">2026</span>
+        <div>
+          <h3>Comparação entre dados administrativos e clínicos: representatividade nacional do BraSCORE nas CRM do DATASUS</h3>
+          <div class="au">Orlandi BMM, Arthur CPS, Mejía OAV, et al.</div>
+          <div class="jr">52º Congresso da SBCCV — João Pessoa, junho/2026 (apresentação oral)</div>
+        </div>
+      </div>
+
+      <div class="pub">
+        <span class="yr">2025</span>
+        <div>
+          <h3>BraSCORE: Is Brazil's Healthcare System Failing Cardiac Patients?</h3>
+          <div class="au">Orlandi BMM, Tiveron MG, Arthur CPS, Segalote R, Castilho B, Menezes AM, Alves US, Guerreiro GP, Andrade DPG, Kalil R, Tiveron MG, Nina V, Cavalcante LR, Praça MAO, Lisboa LAF, Atik F, Mejía OAV.</div>
+          <div class="jr">II Congresso de Pós-Doutorandos da USP — São Paulo, 2025</div>
+        </div>
+      </div>
+
+      <div class="pub">
+        <span class="yr">2025</span>
+        <div>
+          <h3>BraSCORE — primeiro escore sul-americano em ação: por que o Brasil precisa do seu próprio modelo de risco cirúrgico?</h3>
+          <div class="au">Orlandi BMM, Segalote R, Feguri G, Arthur CPS, Figueira FAMS, Menezes AM, Alves US, Andrade DPG, Guerreiro GP, Kalil R, Tiveron MG, Cavalcante LR, Castilho B, Nina V, Mejía OAV.</div>
+          <div class="jr">VIII Congresso Sulbrasileiro de Cirurgia Cardiovascular — Gramado, RS, 2025 (pôster)</div>
+        </div>
+      </div>
+
+      <div class="pub">
+        <span class="yr">2025</span>
+        <div>
+          <h3>BraSCORE: revolucionando a CRM no Brasil com IA e dados de alta qualidade. Como anda a adesão?</h3>
+          <div class="au">Orlandi BMM, Castilho B, Arthur CPS, Mejía OAV, Jatene FB.</div>
+          <div class="jr">51º Congresso da SBCCV — Curitiba, PR, 2025 (pôster)</div>
+        </div>
+      </div>
+
+      <div class="pub">
+        <span class="yr">2023</span>
+        <div>
+          <h3>Estratificação de risco em cirurgia de revascularização miocárdica no Brasil: CABG-BraSCORE</h3>
+          <div class="au">Mejía OAV.</div>
+          <div class="jr">49º Congresso da SBCCV — Maceió, AL, 2023 (conferência — início da trajetória pública do projeto)</div>
+        </div>
+      </div>
+
+      <div class="pub">
+        <span class="yr">2020</span>
+        <div>
+          <h3>REPLICCAR II Study: Data Quality Audit in the Paulista Cardiovascular Surgery Registry</h3>
+          <div class="au">Orlandi BMM, Mejia OAV, Borgomoni GB, Goncharov M, Rocha KN, Bassolli L, et al.</div>
+          <div class="jr">PLoS ONE. 2020;15(7):e0223343</div>
+          <div class="doi">doi: 10.1371/journal.pone.0223343</div>
+        </div>
+      </div>
+
+      <div class="pub">
+        <span class="yr">2020</span>
+        <div>
+          <h3>Analysis of &gt;100,000 Cardiovascular Surgeries Performed at the Heart Institute and a New Era of Outcomes</h3>
+          <div class="au">Mejia OA, Lisboa LA, Caneo LF, Arita ET, Brandão CM, Dias RR, et al.</div>
+          <div class="jr">Arq Bras Cardiol. 2020;114(4):603–612</div>
+          <div class="doi">doi: 10.36660/abc.20190736</div>
+        </div>
+      </div>
+
+      <div class="pub">
+        <span class="yr">2012</span>
+        <div>
+          <h3>O risco dos escores de risco e o sonho pelo BraSCORE</h3>
+          <div class="au">Mejía OAV, Lisboa LAF.</div>
+          <div class="jr">Braz J Cardiovasc Surg. 2012;27(2):xii–i (editorial fundador)</div>
+          <div class="doi">doi: 10.5935/1678-9741.20120032</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CADASTRO -->
+<section class="alt" id="cadastro">
+  <div class="wrap" style="max-width:760px">
+    <span class="label">Junte-se à rede</span>
+    <h2>Cadastro de Colegas</h2>
+    <p>
+      Cadastre-se para receber novidades do projeto, convites para webinars e oportunidades
+      de colaboração científica. Ao enviar, seu cliente de e-mail abrirá com a mensagem
+      pré-formatada para a coordenação.
+    </p>
+
+    <form id="cadastro-form" onsubmit="enviarCadastro(event)" style="margin-top:1.5rem">
+      <div class="frow">
+        <div class="field"><label>Nome completo *</label><input name="nome" required></div>
+        <div class="field"><label>E-mail *</label><input type="email" name="email" required></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Instituição *</label><input name="instituicao" required></div>
+        <div class="field"><label>Cidade / UF *</label><input name="cidade" required placeholder="São Paulo / SP"></div>
+      </div>
+      <div class="frow">
+        <div class="field">
+          <label>Profissão *</label>
+          <select name="profissao" required>
+            <option value="">Selecione...</option>
+            <option>Médico cirurgião cardiovascular</option>
+            <option>Cardiologista</option>
+            <option>Enfermeiro(a)</option>
+            <option>Residente</option>
+            <option>Estudante</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="field"><label>Lattes / ORCID (opcional)</label><input type="url" name="lattes" placeholder="https://..."></div>
+      </div>
+
+      <label style="font-size:12px;font-weight:500;color:var(--mid);margin-top:.5rem;display:block">Tenho interesse em</label>
+      <div class="checks">
+        <label><input type="checkbox" name="interesse" value="Newsletter"> Receber newsletter</label>
+        <label><input type="checkbox" name="interesse" value="Webinars"> Participar de webinars</label>
+        <label><input type="checkbox" name="interesse" value="Pesquisa"> Colaborar em projetos de pesquisa</label>
+        <label><input type="checkbox" name="interesse" value="Centro"> Submeter centro para o BraSCORE</label>
+      </div>
+
+      <div class="lgpd">
+        <input type="checkbox" name="lgpd" required>
+        <span>Aceito receber e-mails do projeto BraSCORE. Meus dados serão usados em conformidade com a <strong>LGPD</strong> (Lei nº 13.709/2018) e podem ser excluídos a qualquer momento por solicitação a biancamaglia@alumni.usp.br.</span>
+      </div>
+
+      <button type="submit" class="submit">Enviar cadastro</button>
+    </form>
+  </div>
+</section>
+
+<!-- PARCERIAS E APOIO INSTITUCIONAL -->
+<section class="alt" id="parcerias">
+  <div class="wrap">
+    <span class="label">Parcerias e apoio institucional</span>
+    <h2>Quem está por trás do BraSCORE</h2>
+    <p>
+      O BraSCORE é coordenado pelo <strong>Instituto do Coração do Hospital das Clínicas da
+      Faculdade de Medicina da USP</strong> (InCor-HCFMUSP) e conta com parceria internacional
+      com o Royal Papworth Hospital, instituição que desenvolve o EuroSCORE.
+    </p>
+
+    <div class="grid-3" style="margin-top:2rem">
+      <!-- INCOR — CENTRO COORDENADOR -->
+      <div class="card" style="text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;height:80px;margin-bottom:1rem;background:var(--light);border-radius:var(--r);overflow:hidden">
+          <img src="LOGO-INCOR.png" alt="InCor — HCFMUSP" style="max-height:64px;width:auto;object-fit:contain"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <div style="display:none;font-family:var(--serif);font-weight:600;color:var(--blue);font-size:1.1rem">InCor · HCFMUSP</div>
+        </div>
+        <h3 style="font-size:15px">InCor — HCFMUSP</h3>
+        <div class="role">Centro coordenador</div>
+        <p>Divisão de Cirurgia Cardiovascular do Instituto do Coração do Hospital das Clínicas da Faculdade de Medicina da USP. Responsável pela coordenação científica, operacional e analítica do projeto.</p>
+        <a href="https://www2.fm.usp.br/incor/" target="_blank" rel="noopener" style="font-size:12px;color:var(--blue);margin-top:.5rem;display:inline-block">incor.fm.usp.br ↗</a>
+      </div>
+
+      <!-- ROYAL PAPWORTH — PARCERIA INTERNACIONAL -->
+      <div class="card" style="text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;height:80px;margin-bottom:1rem;background:var(--light);border-radius:var(--r);overflow:hidden">
+          <img src="LOGO-ROYAL-PAPWORTH.png" alt="Royal Papworth Hospital NHS" style="max-height:64px;width:auto;object-fit:contain"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <div style="display:none;font-family:var(--serif);font-weight:600;color:var(--blue);font-size:1.1rem">Royal Papworth · NHS</div>
+        </div>
+        <h3 style="font-size:15px">Royal Papworth Hospital</h3>
+        <div class="role">Parceria internacional · EuroSCORE 3</div>
+        <p>Hospital especializado em doenças cardiotorácicas vinculado ao NHS britânico (Cambridge, UK). Mantém o EuroSCORE e coordena o desenvolvimento do EuroSCORE 3 — recalibração internacional do modelo. Acordo firmado em junho/2025.</p>
+        <a href="https://royalpapworth.nhs.uk/" target="_blank" rel="noopener" style="font-size:12px;color:var(--blue);margin-top:.5rem;display:inline-block">royalpapworth.nhs.uk ↗</a>
+      </div>
+
+      <!-- 36 CENTROS PARTICIPANTES -->
+      <div class="card" style="text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center;height:80px;margin-bottom:1rem;background:var(--grad);border-radius:var(--r);color:#fff">
+          <div style="font-family:var(--serif);font-weight:600;font-size:2.2rem;line-height:1">36</div>
+        </div>
+        <h3 style="font-size:15px">Centros participantes</h3>
+        <div class="role">Coorte multicêntrica nacional</div>
+        <p>36 hospitais de referência em cirurgia cardiovascular distribuídos pelas 5 regiões do Brasil contribuem com a coleta sistemática de dados clínicos, sob coordenação local de cirurgiões responsáveis.</p>
+        <a href="#comite" style="font-size:12px;color:var(--blue);margin-top:.5rem;display:inline-block">Ver lista completa ↓</a>
+      </div>
+    </div>
+
+    <p style="margin-top:2rem;font-size:13px;color:var(--muted);background:#fff;padding:1.2rem 1.5rem;border-radius:var(--r);border-left:3px solid var(--teal)">
+      <strong>EuroSCORE 3 — o que significa essa parceria.</strong> O EuroSCORE original foi
+      desenvolvido com dados de 2010. A nova versão (EuroSCORE 3) está sendo construída pelo
+      Royal Papworth Hospital com dados contemporâneos de parceiros no mundo todo. O BraSCORE
+      é um dos contribuintes oficiais — o que significa que a realidade brasileira passa a
+      ser representada na recalibração do modelo europeu, e nossos dados ajudam a moldar o
+      principal escore mundial de risco em cirurgia cardíaca.
+    </p>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section id="contato">
+  <div class="wrap">
+    <span class="label">Fale com a coordenação</span>
+    <h2>Contato</h2>
+
+    <div class="grid-3" style="margin-top:1.5rem">
+      <div class="card">
+        <h3>E-mail</h3>
+        <p><a href="mailto:biancamaglia@alumni.usp.br">biancamaglia@alumni.usp.br</a></p>
+      </div>
+      <div class="card">
+        <h3>Coordenação</h3>
+        <p>Divisão de Cirurgia Cardiovascular<br>InCor — HCFMUSP</p>
+      </div>
+      <div class="card">
+        <h3>Endereço</h3>
+        <p>Av. Dr. Enéas Carvalho de Aguiar, 44<br>Cerqueira César — São Paulo / SP<br>CEP 05403-000</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="ft-grid">
+      <div>
+        <div class="ft-brand">BraSCORE</div>
+        <p style="line-height:1.7">
+          Brazilian System for Cardiac Operative Risk Evaluation — coorte multicêntrica nacional
+          para o desenvolvimento do primeiro escore brasileiro de risco para CRM.
+        </p>
+      </div>
+      <div>
+        <h4>Projeto</h4>
+        <ul>
+          <li><a href="#sobre">O BraSCORE</a></li>
+          <li><a href="#comite">Comitê Científico</a></li>
+          <li><a href="#publicacoes">Publicações</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Recursos</h4>
+        <ul>
+          <li><a href="#calculadora">Calculadora</a></li>
+          <li><a href="#documentos">Documentos</a></li>
+          <li><a href="#cadastro">Cadastro</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <span>© <span id="year"></span> BraSCORE · InCor — HCFMUSP · projetobrascore.com.br · Todos os direitos reservados.</span>
+      <span>Em conformidade com a LGPD · Parceiro EuroSCORE 3 · Royal Papworth NHS</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Ano atual
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Fecha menu mobile ao clicar em link
+  document.querySelectorAll('nav.menu a').forEach(a => {
+    a.addEventListener('click', () => document.getElementById('menu').classList.remove('open'));
+  });
+
+  // Cadastro via mailto (sem servidor)
+  function enviarCadastro(e) {
+    e.preventDefault();
+    const f = e.target;
+    const dados = new FormData(f);
+    const interesses = dados.getAll('interesse').join(', ') || '—';
+    const corpo =
+      'Olá, gostaria de me cadastrar na rede BraSCORE.%0D%0A%0D%0A' +
+      'Nome: '         + encodeURIComponent(dados.get('nome'))         + '%0D%0A' +
+      'E-mail: '       + encodeURIComponent(dados.get('email'))        + '%0D%0A' +
+      'Instituição: '  + encodeURIComponent(dados.get('instituicao'))  + '%0D%0A' +
+      'Cidade/UF: '    + encodeURIComponent(dados.get('cidade'))       + '%0D%0A' +
+      'Profissão: '    + encodeURIComponent(dados.get('profissao'))    + '%0D%0A' +
+      'Lattes/ORCID: ' + encodeURIComponent(dados.get('lattes') || '—')+ '%0D%0A' +
+      'Interesses: '   + encodeURIComponent(interesses)                + '%0D%0A%0D%0A' +
+      'Aceito a Política de Privacidade (LGPD).';
+    const assunto = encodeURIComponent('[BraSCORE] Cadastro — ' + dados.get('nome'));
+    window.location.href = 'mailto:biancamaglia@alumni.usp.br?subject=' + assunto + '&body=' + corpo;
+  }
+</script>
+
+</body>
+</html>
