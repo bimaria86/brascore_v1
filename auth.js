@@ -29,7 +29,7 @@
   };
 
   const DEFAULT_ADMIN = 'estatisticanasaude@gmail.com';
-  const CONTACT_EMAIL = 'estatisticanasaude@gmail.com'; // e-mail mostrado em mensagens de bloqueio
+  const CONTACT_EMAIL = 'biancamaglia@alumni.usp.br'; // e-mail mostrado em mensagens de bloqueio
 
   // ===== LISTA OFICIAL DE E-MAILS AUTORIZADOS =====
   // Sempre em letras minúsculas. Para adicionar alguém de forma permanente,
@@ -108,7 +108,8 @@
     'cardiologiahf1@gmail.com',
     'gabrielazlruiz@gmail.com',
     'sallesfb@gmail.com',
-    'jorgeluismed@me.com'
+    'jorgeluismed@me.com',
+    'caroline.l.m.med@gmail.com'
   ];
 
   // Inicialização — só na primeira visita

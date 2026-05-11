@@ -1,0 +1,271 @@
+BRASCORE CODEBOOK - VARIÁVEIS COMPLETAS
+========================================
+
+Descrição: Mapeamento técnico de todas as 147 variáveis em uso no BraSCORE
+Data: Maio 2026
+Status: Em Transição
+
+TELA 0: IDENTIFICAÇÃO DO PACIENTE
+==================================
+
+Variable Name|Database Field|Type|Min|Max|Required|Validation|Description
+patient_id|id|UUID|N/A|N/A|Sim|UUID único|Identificador único do paciente (gerado automaticamente)
+hospital_id|id_hospital|INT|1|N/A|Sim|FK hospitals|Identificador da instituição
+med_record|registrohospitalar|VARCHAR|N/A|50|Sim|Único por hospital|Registro hospitalar (número de prontuário da instituição)
+patient_name|nome|VARCHAR|N/A|255|Sim|Criptografado|Nome completo do paciente
+age|idade|INT|0|120|Sim|Numérico inteiro|Idade em anos completos
+gender|sexo|ENUM|N/A|N/A|Sim|(1)M (0)F|Sexo biológico: 1=Masculino, 0=Feminino
+admission_date|dataadmissao|DATE|N/A|N/A|Sim|Data válida|Data de admissão na instituição
+admission_type|tipoadmissao|ENUM|N/A|N/A|Sim|(0)Eletiva (1)Urgência (2)Emergência (3)Salvamento|Tipo de admissão
+phone|telefone|VARCHAR|N/A|20|Não|Criptografado|Telefone para contato
+health_plan|planosaude|VARCHAR|N/A|100|Não|N/A|Nome do plano de saúde
+cpf|cpf|VARCHAR|N/A|20|Não|Criptografado, validar|CPF para identificação (11 dígitos)
+
+TELA 1: FATORES DE RISCO CLÍNICO
+==================================
+
+Variable Name|Database Field|Type|Min|Max|Required|Validation|Description
+weight_kg|pesokg|FLOAT|20|300|Sim|Numérico|Peso em quilogramas
+height_cm|alturacm|FLOAT|100|250|Sim|Numérico|Altura em centímetros
+bmi|imc|FLOAT|10|60|Não|Calculado: peso/(altura²)|Índice de Massa Corporal (calculado)
+diabetes|diabetes|ENUM|N/A|N/A|Sim|(1)Sim (0)Não|Diagnóstico prévio de diabetes mellitus
+diabetes_control|tratamentodiabetes|ENUM|N/A|N/A|Condicional|Se diabetes=Sim: (1)Sem controle (2)Dieta (3)Oral (4)Insulina (5)Subcutânea|Tipo de controle glicêmico
+dialysis|dialise|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Em diálise crônica?
+covid19|covid19|ENUM|N/A|N/A|Não|(0)Negativa (1)Leve (2)Moderada (3)Severa|Gravidade de infecção COVID-19
+covid19_date|datadiagnosticocovid|DATE|N/A|N/A|Condicional|Se covid19>Negativa: data válida|Data do diagnóstico de COVID-19
+covid19_vaccine|situacaovacinal|ENUM|N/A|N/A|Condicional|Se covid19>Negativa: (1)Completa (0)Incompleta|Situação vacinal completa ou incompleta
+hypertension|hipertensao|ENUM|N/A|N/A|Sim|(1)Sim (0)Não|Hipertensão arterial sistêmica
+endocarditis|endocardite|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Diagnóstico de endocardite
+endocarditis_type|tipoendocardite|ENUM|N/A|N/A|Condicional|Se endocardite=Sim: (1)Ativa (0)Tratada|Tipo de endocardite
+copd|doencapulmonar|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Doença Pulmonar Obstrutiva Crônica
+copd_severity|gravidadedadoencapulmonar|ENUM|N/A|N/A|Condicional|Se copd=Sim: (0)Leve (1)Moderada (2)Severa|Gravidade da DPOC
+liver_disease|doencahepatica|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Doença hepática crônica
+child_pugh_class|childpughclass|ENUM|N/A|N/A|Condicional|Se liver_disease=Sim: (0)A (1)B (2)C|Classificação Child-Pugh para cirrose
+mediastinal_rad|radioterapiamediastinal|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Radioterapia mediastinal prévia
+cancer_5y|cancernoscincosanos|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Câncer nos últimos 5 anos
+cancer_status|statuscancer|ENUM|N/A|N/A|Condicional|Se cancer_5y=Sim: (0)Remissão (1)Tratamento ativo|Status oncológico atual
+extracardiac_ad|doencaarterialextracardíaca|VARCHAR|N/A|500|Não|(1)Claudicação (2)Oclusão carotida >50% (3)Amputação (4)Intervenção aorta/membro/carótida|Doença arterial extracardíaca
+mobility|mobilidade|ENUM|N/A|N/A|Não|(0)Normal (1)Musculoesquética (2)Neurológica|Disfunção de mobilidade
+
+TELA 2: EXAMES E TESTES FUNCIONAIS
+====================================
+
+Variable Name|Database Field|Type|Min|Max|Required|Validation|Description
+hemoglobin|exalabhemoglobina|FLOAT|1|50|Sim|Numérico|Hemoglobina em mg/dL
+hematocrit|exalabhematocrito|FLOAT|1|99.99|Sim|Numérico|Hematócrito em %
+leukocytes|exalableucocitos|INT|1000|99000|Sim|Numérico inteiro|Leucócitos em /mm³
+platelets|exalabplaquetas|INT|10000|N/A|Não|Numérico inteiro|Plaquetas em /mm³
+glucose|exalabglicemia|INT|40|500|Não|Numérico inteiro|Glicemia em mg/dL (em jejum)
+creatinine|exalabcreatina|FLOAT|0.1|30|Sim|Numérico|Creatinina em mg/dL
+a1c|exalabhemoglobinaglicosada|FLOAT|1|20|Não|Numérico|Hemoglobina glicosilada (HbA1c) em %
+ejection_fraction|ecocarfracaoejecao|INT|1|99|Sim|Numérico inteiro 1-99|Fração de ejeção do VE em %
+spap|ecocarpressistoartepulmo|INT|10|150|Não|Numérico inteiro|SPAP (Pressão sistólica artéria pulmonar) em mmHg
+valve_disease|ecocardoencaqualvalva|ENUM|N/A|N/A|Sim|(1)Aórtica (2)Mitral (3)Tricúspide (4)Pulmonar|Qual válvula é acometida?
+ao_stenosis|ecocarvalaorticaestenoseaortica|ENUM|N/A|N/A|Condicional|Se valve_disease=Aórtica: (1)Leve (2)Moderado (3)Severo (99)Não doc|Gravidade estenose aórtica
+mi_stenosis|ecocarvalamitralestenose|ENUM|N/A|N/A|Condicional|Se valve_disease=Mitral: (1)Leve (2)Moderado (3)Severo (99)Não doc|Gravidade estenose mitral
+tr_stenosis|ecocarvalatricuspideestenose|ENUM|N/A|N/A|Condicional|Se valve_disease=Tricúspide: (1)Leve (2)Moderado (3)Severo (99)Não doc|Gravidade estenose tricúspide
+pu_stenosis|ecocarvalapulmonarestenose|ENUM|N/A|N/A|Condicional|Se valve_disease=Pulmonar: (1)Leve (2)Moderado (3)Severo (99)Não doc|Gravidade estenose pulmonar
+ao_insufficiency|ecocarvalaorticagravidadeinsuaortica|ENUM|N/A|N/A|Condicional|Se valve_disease=Aórtica: (1)Leve (2)Moderado (3)Severo (99)Não doc|Gravidade insuficiência aórtica
+mi_insufficiency|ecocarvalmitragravidainsumitral|ENUM|N/A|N/A|Condicional|Se valve_disease=Mitral: (1)Leve (2)Moderado (3)Severo (99)Não doc|Gravidade insuficiência mitral
+tr_insufficiency|ecocartricusgraviinsufitricuspide|ENUM|N/A|N/A|Condicional|Se valve_disease=Tricúspide: (1)Leve (2)Moderado (3)Severo (99)Não doc|Gravidade insuficiência tricúspide
+pu_insufficiency|ecocarpulmogravidadeinsufucipulmonar|ENUM|N/A|N/A|Condicional|Se valve_disease=Pulmonar: (1)Leve (2)Moderado (3)Severo (99)Não doc|Gravidade insuficiência pulmonar
+
+TELA 3: ESTADO CARDÍACO PRÉ-OPERATÓRIO
+========================================
+
+Variable Name|Database Field|Type|Min|Max|Required|Validation|Description
+mi_when|tempoimcirurgia|ENUM|N/A|N/A|Não|(0)≤6h (1)6-24h (2)1-7d (3)>7d (4)>90d|Tempo entre infarto e cirurgia RM
+congenital_prev|cirurgiacongenitaprevia|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Cirurgia congênita prévia
+congenital_disease|doencacongenita|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Doença cardíaca congênita
+valve_prev_surg|cirurgiavalvarprevia|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Cirurgia valvar prévia
+cabg_prev|cirurrevascularizacaomiocardioprevia|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Cirurgia de revascularização prévia
+other_surg_prev|ciruroutroprevia|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Outra cirurgia cardíaca prévia
+cardiac_symptoms|sintomascardiacosadmissao|ENUM|N/A|N/A|Sim|(1)Sem sintomas (2)Angina estável (3)Angina instável (4)IAM com ST (5)IAM sem ST (6)Equiv isquêmico (7)Outro|Sintomas cardíacos na admissão
+angina_class|classeccsdoisultimassemanas|ENUM|N/A|N/A|Condicional|Se cardiac_symptoms=Angina: (0)I (1)II (2)III (3)IV|Classe CCS de angina (2 últimas semanas)
+chf|insuficienciacardiacaultduassemanas|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Insuficiência cardíaca (2 últimas semanas)
+nyha_class|classefuncionalnyha|ENUM|N/A|N/A|Condicional|Se chf=Sim: (0)I (1)II (2)III (3)IV|Classe funcional NYHA pré-operatório
+cardiogenic_shock|choquecardiogenico|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Choque cardiogênico antes da cirurgia
+cpr_preop|ressucitcacaocardiopulmonar|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Ressuscitação cardiopulmonar antes da cirurgia
+pacemaker|marcapassopermanente|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Marcapasso permanente pré-operatório
+sss_disease|doencanosinusal|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Doença do nó sinusal
+atrial_flutter|flutteratrial|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Flutter atrial pré-operatório
+atrial_fib|fibrilacaoarterial|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Fibrilação atrial pré-operatória
+bav_2nd|bavsegundograu|ENUM|N/A|N/A|Não|(1)Sim (0)Não|BAV 2º grau pré-operatório
+bav_total|bavt|ENUM|N/A|N/A|Não|(1)Sim (0)Não|BAV total (3º grau) pré-operatório
+afib_type|tipofibrilacaoaterial|ENUM|N/A|N/A|Condicional|Se atrial_fib=Sim: (0)Paroxística <7d (1)Persistente >7d (2)Persistente ≥1a (3)Permanente|Tipo de fibrilação atrial
+
+TELA 4: CIRURGIA - DADOS GERAIS
+=================================
+
+Variable Name|Database Field|Type|Min|Max|Required|Validation|Description
+frailty_score|fragilidade|INT|0|5|Não|Numérico 0-5|Score de fragilidade (Fried Frailty Index)
+surgery_date|datacirurgia|DATE|N/A|N/A|Sim|Data válida|Data da cirurgia
+anesthesia_modular|anestesiamodular|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Anestesia modular utilizada
+regional_block|bloqueioregional|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Bloqueio regional (neuroaxial) utilizado
+sts_score|stsscore|FLOAT|0|100|Não|Numérico|STS score para mortalidade (pré-operatório)
+sp_score|spscore|FLOAT|0|100|Não|Numérico|SP score (Score de Risco Español)
+preop_fasting|encurtamento|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Encurtamento do jejum pré-operatório
+sealants_glues|selantes_colas|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Uso de selantes e colas cirúrgicas
+
+TELA 5: REVASCULARIZAÇÃO DO MIOCÁRDIO
+=======================================
+
+[Padrão para cada artéria: IMA-D, IMA-E, Radial, Safena, Epigástrica, Gastroepiplóica]
+
+Variable Name|Database Field|Type|Min|Max|Required|Validation|Description
+cabg_performed|procedimento_realizado|ENUM|N/A|N/A|Sim|(1)Sim (0)Não|Procedimento de revascularização realizado
+right_ima_technique|A_Q1|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Esqueletizada (2)Pedícula|Técnica de dissecção IMA-D
+right_ima_prox_anast|A_Q2|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)In-situ (2)Aorta (3)ITA (4)Radial (5)Veia|Tipo de anastomose proximal IMA-D
+right_ima_dist_anast|A_Q3|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Sequencial (2)Término-lateral (3)Outro|Tipo de anastomose distal IMA-D
+right_ima_prox_count|numberA_Q2|INT|1|5|Condicional|Se CABG=Sim: numérico|Número de anastomoses proximais IMA-D
+right_ima_dist_count|numberA_Q3|INT|1|6|Condicional|Se CABG=Sim: numérico|Número de anastomoses distais IMA-D
+left_ima_technique|B_Q1|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Esqueletizada (2)Pedícula|Técnica de dissecção IMA-E
+left_ima_prox_anast|B_Q2|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)In-situ (2)Aorta (3)ITA (4)Radial (5)Veia|Tipo de anastomose proximal IMA-E
+left_ima_dist_anast|B_Q3|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Sequencial (2)Término-lateral (3)Outro|Tipo de anastomose distal IMA-E
+left_ima_prox_count|numberB_Q2|INT|1|5|Condicional|Se CABG=Sim: numérico|Número de anastomoses proximais IMA-E
+left_ima_dist_count|numberB_Q3|INT|1|6|Condicional|Se CABG=Sim: numérico|Número de anastomoses distais IMA-E
+radial_technique|C_Q1|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Convencional (2)Endoscópica|Técnica de extração de artéria radial
+radial_prox_anast|C_Q2|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Aorta (2)ITA (3)Veia|Tipo de anastomose proximal Radial
+radial_dist_anast|C_Q3|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Sequencial (2)Término-lateral (3)Outro|Tipo de anastomose distal Radial
+radial_prox_count|numberC_Q2|INT|1|4|Condicional|Se CABG=Sim: numérico|Número de anastomoses proximais Radial
+radial_dist_count|numberC_Q3|INT|1|4|Condicional|Se CABG=Sim: numérico|Número de anastomoses distais Radial
+saphenous_technique|D_Q1|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Convencional (2)Endoscópica (3)Non-touch|Técnica de extração safena
+saphenous_prox_anast|D_Q2|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Aorta (2)ITA (3)Veia|Tipo de anastomose proximal Safena
+saphenous_dist_anast|D_Q3|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Sequencial (2)Término-lateral (3)Outro|Tipo de anastomose distal Safena
+saphenous_prox_count|numberD_Q2|INT|1|4|Condicional|Se CABG=Sim: numérico|Número de anastomoses proximais Safena
+saphenous_dist_count|numberD_Q3|INT|1|5|Condicional|Se CABG=Sim: numérico|Número de anastomoses distais Safena
+epigastric_prox_anast|E_Q2|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Aorta (2)ITA (3)Radial (4)Veia|Tipo de anastomose proximal Epigástrica
+epigastric_dist_anast|E_Q3|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Sequencial (2)Término-lateral (3)Outro|Tipo de anastomose distal Epigástrica
+epigastric_prox_count|numberE_Q2|INT|1|3|Condicional|Se CABG=Sim: numérico|Número de anastomoses proximais Epigástrica
+epigastric_dist_count|numberE_Q3|INT|1|3|Condicional|Se CABG=Sim: numérico|Número de anastomoses distais Epigástrica
+gastroepiploic_prox_anast|F_Q2|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Aorta (2)ITA (3)Radial (4)Veia|Tipo de anastomose proximal Gastroepiplóica
+gastroepiploic_dist_anast|F_Q3|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (1)Sequencial (2)Término-lateral (3)Outro|Tipo de anastomose distal Gastroepiplóica
+gastroepiploic_prox_count|numberF_Q2|INT|1|3|Condicional|Se CABG=Sim: numérico|Número de anastomoses proximais Gastroepiplóica
+gastroepiploic_dist_count|numberF_Q3|INT|1|3|Condicional|Se CABG=Sim: numérico|Número de anastomoses distais Gastroepiplóica
+tce_stenosis|revascularizacaoum|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (50)<70% (80)70-90% (95)>90% (100)100%|Grau de estenose TCE (Tronco Encefálico)
+d1_stenosis|revascularizacaodois|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (50)<70% (80)70-90% (95)>90% (100)100%|Grau de estenose D1 (1ª diagonal)
+d2_stenosis|revascularizacaotres|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (50)<70% (80)70-90% (95)>90% (100)100%|Grau de estenose D2 (2ª diagonal)
+lad_stenosis|revascularizacaoquatro|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (50)<70% (80)70-90% (95)>90% (100)100%|Grau de estenose DA (Descendente Anterior)
+m1_stenosis|revascularizacaocinco|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (50)<70% (80)70-90% (95)>90% (100)100%|Grau de estenose M1 (1ª marginal)
+m2_stenosis|revascularizacaoseis|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (50)<70% (80)70-90% (95)>90% (100)100%|Grau de estenose M2 (2ª marginal)
+cx_stenosis|revascularizacaosete|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (50)<70% (80)70-90% (95)>90% (100)100%|Grau de estenose CX (Circunflexa)
+rca_stenosis|revascularizacaooito|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (50)<70% (80)70-90% (95)>90% (100)100%|Grau de estenose CD (Coronária Direita)
+vp_stenosis|revascularizacaonovo|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (50)<70% (80)70-90% (95)>90% (100)100%|Grau de estenose VP (Ventrículo Posterior)
+pda_stenosis|revascularizacaodez|ENUM|N/A|N/A|Condicional|Se CABG=Sim: (50)<70% (80)70-90% (95)>90% (100)100%|Grau de estenose DP (Descendente Posterior)
+
+TELA 6: PROCEDIMENTOS VALVARES
+===============================
+
+Variable Name|Database Field|Type|Min|Max|Required|Validation|Description
+valve_procedures|procedimento|VARCHAR|N/A|500|Não|Lista de válvulas: Aórtica; Mitral; Tricúspide; Pulmonar|Quais procedimentos valvares foram realizados
+ao_valve_replacement|troca_va|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Troca valva aórtica
+ao_valve_repair|plastia_va|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Plastia (reparo) valva aórtica
+ao_prosthesis_serial|num_serie_va|VARCHAR|N/A|50|Condicional|Se replacement=Sim: alfanumérico|Número de série da prótese aórtica
+ao_prosthesis_brand|marca_protesis_va|VARCHAR|N/A|100|Condicional|Se replacement=Sim: texto|Marca da prótese aórtica (ex: Medtronic, Edwards, St Jude)
+mi_valve_replacement|troca_vm|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Troca valva mitral
+mi_valve_repair|plastia_vm|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Plastia (reparo) valva mitral
+mi_prosthesis_serial|num_serie_vm|VARCHAR|N/A|50|Condicional|Se replacement=Sim: alfanumérico|Número de série da prótese mitral
+mi_prosthesis_brand|marca_protesis_vm|VARCHAR|N/A|100|Condicional|Se replacement=Sim: texto|Marca da prótese mitral
+pu_valve_replacement|troca_vp|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Troca valva pulmonar
+pu_valve_repair|plastia_vp|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Plastia (reparo) valva pulmonar
+pu_prosthesis_serial|num_serie_vp|VARCHAR|N/A|50|Condicional|Se replacement=Sim: alfanumérico|Número de série da prótese pulmonar
+pu_prosthesis_brand|marca_protesis_vp|VARCHAR|N/A|100|Condicional|Se replacement=Sim: texto|Marca da prótese pulmonar
+tr_valve_replacement|troca_vt|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Troca valva tricúspide
+tr_valve_repair|plastia_vt|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Plastia (reparo) valva tricúspide
+tr_prosthesis_serial|num_serie_vt|VARCHAR|N/A|50|Condicional|Se replacement=Sim: alfanumérico|Número de série da prótese tricúspide
+tr_prosthesis_brand|marca_protesis_vt|VARCHAR|N/A|100|Condicional|Se replacement=Sim: texto|Marca da prótese tricúspide
+
+TELA 7: CIRCULAÇÃO EXTRACORPÓREA (CEC)
+========================================
+
+Variable Name|Database Field|Type|Min|Max|Required|Validation|Description
+ecmo_time|tempocec|INT|0|600|Condicional|Se CEC utilizada: numérico|Tempo total de CEC em minutos
+cerebral_perfusion_time|tempoperfusaocerebral|INT|0|300|Condicional|Se parada circulatória: numérico|Tempo de perfusão cerebral em minutos
+cerebral_perfusion_util|paradacirculatoria|ENUM|N/A|N/A|Condicional|Se parada circulatória: (0)Sem perfusão (1)Com perfusão|Tipo de proteção cerebral
+prime_volume|volumesolucao|INT|500|5000|Não|Numérico|Volume do prime (solução de preenchimento) em ml
+lung_ventilation_ecmo|ventilacaopulmonar|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Ventilação pulmonar durante a CEC
+filler_solution|solucaopreenchimento|VARCHAR|N/A|100|Não|Texto (ex: Ringer's, NaCl 0.9%, Plasmalite)|Tipo de solução de preenchimento
+dhca_time|tempoparadacirculatoriatotal|INT|0|120|Condicional|Se parada circulatória profunda: numérico|Tempo total de parada circulatória profunda em minutos
+cerebral_perf_type|tipoperfusaocerebral|ENUM|N/A|N/A|Condicional|Se parada circulatória: (0)Anterógrada (1)Retrógrada (2)Mista|Tipo de perfusão cerebral
+aorta_cross_time|tempoanoxia|INT|0|300|Condicional|Se CEC: numérico|Tempo de pinçamento aórtico em minutos
+cerebral_oximetry|oximetriacerebral|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Oximetria cerebral monitorizada
+aorta_occlusion|oclusaoaorta|ENUM|N/A|N/A|Condicional|Se CEC: (0)Nenhuma/batendo (1)Nenhuma/fibrilando (2)Pinçamento (3)Balão|Tipo de oclusão aórtica
+cardioplegia_delivery|entregacardioplegia|ENUM|N/A|N/A|Condicional|Se cardioplegia: (0)Anterógrada (1)Retrógrada (2)Mista|Via de entrega da cardioplegia
+cardioplegia_type|classecardioplegia|ENUM|N/A|N/A|Condicional|Se cardioplegia: (0)Del Nido (1)St Thomas (2)Custodiol (3)Outras|Tipo de solução de cardioplegia
+cec_type|cec_type|ENUM|N/A|N/A|Sim|(0)Sem CEC (1)Com CEC (2)Com CEC batendo|Tipo de CEC utilizada
+cardioplegia_used|is_cardioplegia|ENUM|N/A|N/A|Condicional|Se CEC: (1)Sim (0)Não|Cardioplegia utilizada
+oxygenator_brand|marca_oxigenador|ENUM|N/A|N/A|Condicional|Se CEC: (0)Braile (1)Livanova (2)Medtronic (3)Terumo (4)Nipro (5)Outras|Marca do oxigenador
+circulatory_arrest|parada_circulatoria|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Parada circulatória profunda utilizada
+
+TELA 8: PÓS-OPERATÓRIO IMEDIATO
+=================================
+
+Variable Name|Database Field|Type|Min|Max|Required|Validation|Description
+reintubation_date|datahoraintubacao|DATETIME|N/A|N/A|Não|Data e hora|Data e hora da reintubação (se necessário)
+extubation_date|datahora_extubacao|DATETIME|N/A|N/A|Não|Data e hora|Data e hora da extubação definitiva
+icu_admission_date|datahoraadmissaouti|DATETIME|N/A|N/A|Sim|Data e hora|Data e hora de entrada na UTI
+icu_discharge_date|datahoraaltauti|DATETIME|N/A|N/A|Sim|Data e hora|Data e hora de alta da UTI
+mortality_hosp|obitoposauperoperatorio|ENUM|N/A|N/A|Sim|(1)Sim (0)Não|Óbito durante internação hospitalar pós-operatória
+mortality_date|dataobito|DATE|N/A|N/A|Condicional|Se mortality=Sim: data válida|Data do óbito
+vasoplegic_shock|choquevasplegico|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Choque vasoplégico ocorreu
+wound_infection|infeccaoferida|ENUM|N/A|N/A|Não|(0)Nenhuma (1)Superficial (2)Profunda (3)Mediastinite|Tipo de infecção de ferida
+mi_postop|infartomiocardio|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Infarto agudo miocárdio pós-operatório
+stroke_postop|avcposoperatorio|ENUM|N/A|N/A|Não|(1)Sim (0)Não|AVC durante internação pós-operatória
+aki|classificacaolesaorenal|ENUM|N/A|N/A|Não|(0)KDIGO I (1)KDIGO II (2)KDIGO III|Classificação KDIGO de lesão renal
+transfusion_preop|transfusaopreop|ENUM|N/A|N/A|Não|(0)Não (1)Sim|Transfusão de hemácias pré-operatória
+transfusion_intraop|transfusaointraop|ENUM|N/A|N/A|Não|(0)Não (1)Sim|Transfusão de hemácias intra-operatória
+transfusion_postop|transfusaopostop|ENUM|N/A|N/A|Não|(0)Não (1)Sim|Transfusão de hemácias pós-operatória
+aki_postop|lesaorenlpostop|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Lesão renal aguda pós-operatória
+ecmo_postop|ecmoutilizado|ENUM|N/A|N/A|Não|(1)Sim (0)Não|ECMO utilizado pós-operatório
+iabp_used|necessidadebalao|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Balão intra-aórtico necessário
+iabp_period|periodobalao|ENUM|N/A|N/A|Condicional|Se IABP=Sim: (0)Pré-OP (1)Intra-OP (2)Pós-OP|Período de uso do balão intra-aórtico
+reoperation|reoperacao|ENUM|N/A|N/A|Não|(0)Não (1)Não-cardíacas (2)Isquemia mio (3)Sangramento (4)Disfunção valvar (5)Problemas aorta (6)Infecção ferida|Reoperação necessária
+reoperation_date|datareoperacao|DATE|N/A|N/A|Condicional|Se reoperation≠Não: data válida|Data da reoperação
+
+TELA 9: DESFECHOS 30 DIAS
+============================
+
+Variable Name|Database Field|Type|Min|Max|Required|Validation|Description
+follow_up_type|tiposeguimento|ENUM|N/A|N/A|Não|(0)Retorno médico (1)Contato telefônico (2)Perda (3)Internado|Tipo de seguimento realizado
+consent_tcle|aceitetcle|ENUM|N/A|N/A|Sim|(1)Sim (0)Não|Aceite do TCLE (Termo Consentimento Livre Esclarecido)
+wound_infection_30d|infeccaoferida30dias|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Infecção de ferida operatória em 30 dias
+readmission_30d|readmissao30dias|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Readmissão hospitalar em 30 dias
+readmission_date_30d|dataredmissao|DATE|N/A|N/A|Condicional|Se readmission_30d=Sim: data válida|Data da readmissão
+infection_type_30d|tipoinfeccaoferida|ENUM|N/A|N/A|Condicional|Se infection_30d=Sim: (1)Superficial (0)Profunda (0)Mediastinite (0)Osteomielite|Tipo de infecção de ferida em 30 dias
+mi_30d|iamposaalta|ENUM|N/A|N/A|Não|(1)Sim (0)Não|IAM após alta hospitalar
+stroke_30d|avcposaalta|ENUM|N/A|N/A|Não|(1)Sim (0)Não|AVC após alta hospitalar
+other_event_30d|outroevento|VARCHAR|N/A|500|Não|Texto livre|Outro evento clínico em 30 dias
+mortality_30d|obitoposaalta|ENUM|N/A|N/A|Não|(1)Sim (0)Não|Óbito após alta hospitalar
+mortality_cause_30d|causaobito|ENUM|N/A|N/A|Condicional|Se mortality_30d=Sim: (1)Cardíaca (0)Não cardíaca|Causa provável do óbito
+mortality_date_30d|dataobito|DATE|N/A|N/A|Condicional|Se mortality_30d=Sim: data válida|Data do óbito
+readmission_discharge|dataaltatredmissao|DATE|N/A|N/A|Condicional|Se readmission_30d=Sim: data válida|Data de alta da readmissão hospitalar
+observations|observacao|TEXT|N/A|5000|Não|Texto livre|Observações clínicas adicionais
+
+NOTAS IMPORTANTES
+=================
+
+1. VALIDAÇÕES CONDICIONAL
+   - Muitos campos são "condicional": aparecem apenas se um campo anterior atende certas condições
+   - Exemplo: Se diabetes=Não, o campo "diabetes_control" não é requerido
+
+2. ENCRIPTAÇÃO LGPD
+   - Dados sensíveis (nome, CPF, telefone) são ser encriptados em trânsito e em repouso
+   - Use AES-256 com chaves em variáveis de ambiente
+
+3. FÓRMULAS CALCULADAS
+   - IMC = weight_kg / (height_cm/100)²
+   - Estes campos não precisam ser preenchidos; são calculados automaticamente
+
+4. CAMPOS ÚNICOS
+   - patient_id: Único globalmente (UUID)
+   - med_record + hospital_id: Único por hospital (chave composta)
+
+5. ÍNDICES RECOMENDADOS
+   - patient_id, hospital_id, admission_date, surgery_date
+   - Para performance em queries de filtro
+
+6. AUDITORIA
+   - TODAS as mudanças são registradas em audit_logs
+   - Nunca usar DELETE direto; usar soft delete (flag)
+
+
