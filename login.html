@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Área Restrita — BraSCORE</title>
+<link rel="icon" type="image/png" href="LOGO%20Final%20BraSCORE.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root, [data-theme="light"] {
+    --blue:#3B4FD8; --teal:#1D9E75;
+    --grad: linear-gradient(135deg,#5B3FD8 0%,#1D9E75 100%);
+    --dark:#111827; --mid:#374151; --muted:#6B7280;
+    --bg:#ffffff; --light:#F9FAFB; --border:#E5E7EB;
+    --card-bg:#ffffff; --input-bg:#F9FAFB;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+    --sans:'IBM Plex Sans',sans-serif; --serif:'Lora',serif;
+  }
+  [data-theme="dark"] {
+    --blue:#7C8DF5; --teal:#34D399;
+    --grad: linear-gradient(135deg,#7C5FF5 0%,#34D399 100%);
+    --dark:#F1F5F9; --mid:#CBD5E1; --muted:#94A3B8;
+    --bg:#0B1220; --light:#111B2E; --border:#1F2A44;
+    --card-bg:#111B2E; --input-bg:#0B1220;
+    --shadow:0 1px 3px rgba(0,0,0,.6),0 1px 2px rgba(0,0,0,.4);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:var(--bg);color:var(--dark);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+  a{color:var(--blue);text-decoration:none}
+  a:hover{opacity:.85}
+  header{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--card-bg)}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:600;color:var(--dark);font-size:1.1rem}
+  .brand img{height:30px;width:auto}
+  .theme-toggle{background:var(--light);border:1px solid var(--border);width:34px;height:34px;border-radius:50%;cursor:pointer;color:var(--mid);display:inline-flex;align-items:center;justify-content:center}
+  .theme-toggle svg{width:16px;height:16px}
+  [data-theme="light"] .theme-toggle .icon-sun{display:none}
+  [data-theme="dark"] .theme-toggle .icon-moon{display:none}
+
+  main{flex:1;display:flex;align-items:center;justify-content:center;padding:3rem 1.5rem;background:var(--light)}
+  .card{width:100%;max-width:420px;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:2.4rem 2rem;box-shadow:var(--shadow)}
+  .card-head{text-align:center;margin-bottom:1.8rem}
+  .card-head h1{font-family:var(--serif);font-size:1.6rem;color:var(--dark);font-weight:600;margin-bottom:.4rem}
+  .card-head p{font-size:13px;color:var(--muted);line-height:1.5}
+  .alert{background:#FFF9E6;border:1px solid #EF9F27;color:#633806;padding:.8rem 1rem;border-radius:8px;font-size:12.5px;margin-bottom:1.4rem;line-height:1.5}
+  [data-theme="dark"] .alert{background:#3B2F0E;border-color:#F59E0B;color:#FCD34D}
+
+  .field{margin-bottom:1rem}
+  label{display:block;font-size:12px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem}
+  input{width:100%;padding:.7rem .9rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--dark);font-family:inherit;font-size:14px;transition:border-color .15s,box-shadow .15s}
+  input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,79,216,.15)}
+  .pw-wrap{position:relative}
+  .pw-toggle{position:absolute;top:50%;right:10px;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+
+  .btn{width:100%;padding:.85rem 1rem;background:var(--blue);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:filter .15s}
+  .btn:hover{filter:brightness(1.08)}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .err{color:#B91C1C;font-size:13px;margin-top:.6rem;display:none}
+  [data-theme="dark"] .err{color:#F87171}
+  .err.show{display:block}
+
+  .links{margin-top:1.4rem;display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+  .links a{color:var(--blue);font-weight:500}
+
+  footer{padding:1rem;text-align:center;font-size:12px;color:var(--muted);border-top:1px solid var(--border);background:var(--card-bg)}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html">
+    <img src="LOGO Final BraSCORE.png" alt="BraSCORE">
+    <span>BraSCORE</span>
+  </a>
+  <button class="theme-toggle" id="themeBtn" aria-label="Alternar tema" title="Modo claro/escuro">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg class="icon-sun"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  </button>
+</header>
+
+<main>
+  <form class="card" id="loginForm" novalidate>
+    <div class="card-head">
+      <h1>Área Restrita</h1>
+      <p>Acesso aos documentos técnicos, manuais, termos de uso e treinamentos do BraSCORE.</p>
+    </div>
+
+    <div class="alert">
+      <strong>Modo demonstração.</strong> A autenticação real e a base de dados estarão disponíveis em breve, quando o servidor entrar em operação. Por enquanto, você pode acessar o conteúdo informando qualquer e-mail válido e uma senha com 4+ caracteres.
+    </div>
+
+    <div class="field">
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" autocomplete="email" required placeholder="seunome@instituicao.com">
+    </div>
+
+    <div class="field">
+      <label for="password">Senha</label>
+      <div class="pw-wrap">
+        <input type="password" id="password" name="password" autocomplete="current-password" required minlength="4" placeholder="••••••">
+        <button type="button" class="pw-toggle" id="pwToggle" aria-label="Mostrar senha">VER</button>
+      </div>
+    </div>
+
+    <button type="submit" class="btn" id="loginBtn">Entrar</button>
+    <div class="err" id="err"></div>
+
+    <div class="links">
+      <a href="index.html">← Voltar ao site</a>
+      <a href="#" id="forgot">Esqueci a senha</a>
+    </div>
+  </form>
+</main>
+
+<footer>© BraSCORE — Brazilian System for Cardiac Operative Risk Evaluation</footer>
+
+<script src="auth.js"></script>
+<script>
+  // Tema
+  (function () {
+    const KEY = 'brascore.theme';
+    const saved = localStorage.getItem(KEY) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      localStorage.setItem(KEY, cur);
+    });
+  })();
+
+  // Se já está logado, redireciona
+  if (BraAuth.getSession()) {
+    const next = new URL(location.href).searchParams.get('next') || 'restrito.html';
+    location.replace(next);
+  }
+
+  // Mostrar/ocultar senha
+  document.getElementById('pwToggle').addEventListener('click', function () {
+    const i = document.getElementById('password');
+    if (i.type === 'password') { i.type = 'text'; this.textContent = 'OCULTAR'; }
+    else { i.type = 'password'; this.textContent = 'VER'; }
+  });
+
+  document.getElementById('forgot').addEventListener('click', function (e) {
+    e.preventDefault();
+    alert('Recuperação de senha estará disponível assim que o servidor de dados entrar em operação. Para suporte, contate a coordenação: ' + BraAuth.getAdminEmail());
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const pw = document.getElementById('password').value;
+    const errBox = document.getElementById('err');
+    errBox.classList.remove('show');
+
+    const r = BraAuth.demoLogin(email, pw);
+    if (!r.ok) { errBox.textContent = r.msg; errBox.classList.add('show'); return; }
+
+    const next = new URL(location.href).searchParams.get('next') || 'restrito.html';
+    location.href = next;
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel do Coordenador — BraSCORE</title>
+<link rel="icon" type="image/png" href="LOGO%20Final%20BraSCORE.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root, [data-theme="light"] {
+    --blue:#3B4FD8; --teal:#1D9E75;
+    --grad: linear-gradient(135deg,#5B3FD8 0%,#1D9E75 100%);
+    --dark:#111827; --mid:#374151; --muted:#6B7280;
+    --bg:#ffffff; --light:#F9FAFB; --border:#E5E7EB;
+    --card-bg:#ffffff; --input-bg:#F9FAFB; --hover:#F3F4F6;
+    --danger:#DC2626; --warn:#D97706; --ok:#059669;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+    --sans:'IBM Plex Sans',sans-serif; --serif:'Lora',serif; --mono:'JetBrains Mono',monospace;
+  }
+  [data-theme="dark"] {
+    --blue:#7C8DF5; --teal:#34D399;
+    --grad: linear-gradient(135deg,#7C5FF5 0%,#34D399 100%);
+    --dark:#F1F5F9; --mid:#CBD5E1; --muted:#94A3B8;
+    --bg:#0B1220; --light:#111B2E; --border:#1F2A44;
+    --card-bg:#111B2E; --input-bg:#0B1220; --hover:#1B2747;
+    --danger:#F87171; --warn:#FBBF24; --ok:#34D399;
+    --shadow:0 1px 3px rgba(0,0,0,.6),0 1px 2px rgba(0,0,0,.4);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:var(--bg);color:var(--dark);min-height:100vh;-webkit-font-smoothing:antialiased}
+  a{color:var(--blue);text-decoration:none}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1.5rem;border-bottom:1px solid var(--border);background:var(--card-bg);position:sticky;top:0;z-index:50}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:600;color:var(--dark);font-size:1.05rem}
+  .brand img{height:30px;width:auto}
+  .topbar-right{display:flex;align-items:center;gap:.6rem}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:linear-gradient(135deg,#5B3FD8,#1D9E75);color:#fff;font-size:12px;border:none}
+  .icon-btn{background:var(--light);border:1px solid var(--border);width:34px;height:34px;border-radius:50%;cursor:pointer;color:var(--mid);display:inline-flex;align-items:center;justify-content:center}
+  .icon-btn svg{width:16px;height:16px}
+  [data-theme="light"] .icon-sun{display:none}
+  [data-theme="dark"]  .icon-moon{display:none}
+  .btn-link{font-size:12.5px;color:var(--mid);background:none;border:none;cursor:pointer;font-family:inherit;padding:6px 10px;border-radius:6px}
+  .btn-link:hover{background:var(--hover);color:var(--dark)}
+
+  .layout{max-width:1240px;margin:0 auto;padding:1.6rem 1.6rem 4rem}
+  .head{margin-bottom:1.6rem}
+  .head .label{display:inline-block;font-size:11px;font-weight:600;color:var(--blue);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.3rem}
+  .head h1{font-family:var(--serif);font-size:1.9rem;color:var(--dark);font-weight:600}
+  .head p{font-size:13.5px;color:var(--muted);margin-top:.3rem}
+
+  .tabs{display:flex;gap:.3rem;border-bottom:1px solid var(--border);margin-bottom:1.6rem}
+  .tab{background:none;border:none;padding:.7rem 1.1rem;font-family:inherit;font-size:13.5px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab:hover{color:var(--dark)}
+  .tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+
+  /* Cards / blocos */
+  .card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.4rem 1.5rem;box-shadow:var(--shadow);margin-bottom:1.2rem}
+  .card h2{font-family:var(--serif);font-size:1.2rem;color:var(--dark);font-weight:600;margin-bottom:.2rem}
+  .card .sub{font-size:12.5px;color:var(--muted);margin-bottom:1rem}
+
+  /* Stats */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.9rem;margin-bottom:1.4rem}
+  .stat{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem}
+  .stat .v{font-family:var(--serif);font-size:1.6rem;font-weight:600;color:var(--dark)}
+  .stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:.2rem}
+
+  /* Inputs */
+  .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+  .row input,.row select{flex:1;min-width:220px;padding:.65rem .85rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--dark);font-family:inherit;font-size:13.5px}
+  .row input:focus,.row select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,79,216,.15)}
+  .btn{padding:.6rem 1.1rem;background:var(--blue);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:filter .15s}
+  .btn:hover{filter:brightness(1.08)}
+  .btn-outline{background:transparent;color:var(--mid);border:1px solid var(--border)}
+  .btn-outline:hover{color:var(--dark);background:var(--hover)}
+  .btn-danger{background:var(--danger)}
+
+  /* Tabela */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{font-weight:600;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--border)}
+  td{padding:.7rem .8rem;border-bottom:1px solid var(--border);color:var(--mid);vertical-align:middle}
+  td .mono{font-family:var(--mono);font-size:12px;color:var(--dark)}
+  tr:hover td{background:var(--hover)}
+  .role{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.05em}
+  .role.coordenador{background:linear-gradient(135deg,#5B3FD8,#1D9E75);color:#fff}
+  .role.pesquisador{background:#EEF0FD;color:#3B4FD8}
+  [data-theme="dark"] .role.pesquisador{background:#1B2747;color:#7C8DF5}
+  .role.visitante{background:#F3F4F6;color:#6B7280}
+  [data-theme="dark"] .role.visitante{background:#1F2A44;color:#94A3B8}
+  .role.ativo{background:#D1FAE5;color:#065F46}
+  [data-theme="dark"] .role.ativo{background:#064E3B;color:#34D399}
+  .role.inativo{background:#FEE2E2;color:#991B1B}
+  [data-theme="dark"] .role.inativo{background:#7F1D1D;color:#F87171}
+
+  .actions{display:flex;gap:.4rem;flex-wrap:wrap}
+  .ic{cursor:pointer;background:none;border:1px solid var(--border);border-radius:6px;padding:4px 9px;font-size:11px;color:var(--mid);font-family:inherit}
+  .ic:hover{color:var(--dark);background:var(--hover)}
+  .ic.danger{color:var(--danger);border-color:var(--danger)}
+
+  .empty{padding:2rem;text-align:center;color:var(--muted);font-size:13px}
+
+  .log-row{display:grid;grid-template-columns:140px 110px 1fr 200px;gap:.8rem;padding:.55rem .8rem;border-bottom:1px solid var(--border);font-size:12.5px;align-items:center}
+  .log-row:hover{background:var(--hover)}
+  .log-row .ts{font-family:var(--mono);color:var(--muted);font-size:11.5px}
+  .log-row .ty{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:10px;background:var(--light);color:var(--mid);justify-self:start}
+  .log-row .ty.login\.ok{background:#D1FAE5;color:#065F46}
+  .log-row .ty.logout{background:#FEF3C7;color:#92400E}
+  .log-row .ty.file\.opened{background:#EEF0FD;color:#3B4FD8}
+  [data-theme="dark"] .log-row .ty.login\.ok{background:#064E3B;color:#34D399}
+  [data-theme="dark"] .log-row .ty.logout{background:#3B2F0E;color:#FBBF24}
+  [data-theme="dark"] .log-row .ty.file\.opened{background:#1B2747;color:#7C8DF5}
+  .log-row .det{color:var(--dark)}
+  .log-row .who{font-family:var(--mono);color:var(--muted);font-size:11.5px;text-align:right}
+
+  .audit-row{display:grid;grid-template-columns:140px 200px 1fr 1fr 160px;gap:.8rem;padding:.6rem .8rem;border-bottom:1px solid var(--border);font-size:12.5px;align-items:center}
+  .audit-row:hover{background:var(--hover)}
+  .audit-row .ts{font-family:var(--mono);color:var(--muted);font-size:11.5px}
+  .audit-row .ac{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--blue)}
+  .audit-row .col{color:var(--mid);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .audit-row .by{font-family:var(--mono);color:var(--muted);font-size:11.5px;text-align:right}
+
+  .alert{padding:.8rem 1rem;border-radius:8px;font-size:13px;margin-bottom:1rem;display:none}
+  .alert.show{display:block}
+  .alert.ok{background:#D1FAE5;color:#065F46;border:1px solid #6EE7B7}
+  .alert.err{background:#FEE2E2;color:#991B1B;border:1px solid #FCA5A5}
+  [data-theme="dark"] .alert.ok{background:#064E3B;color:#34D399;border-color:#10B981}
+  [data-theme="dark"] .alert.err{background:#7F1D1D;color:#F87171;border-color:#DC2626}
+
+  .filter-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+  .filter-row input{padding:.45rem .8rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--dark);font-family:inherit;font-size:12.5px;min-width:200px}
+
+  @media (max-width: 720px){
+    .log-row,.audit-row{grid-template-columns:1fr;gap:.2rem}
+    .log-row .who,.audit-row .by{text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="brand" href="index.html">
+    <img src="LOGO Final BraSCORE.png" alt="BraSCORE">
+    <span>BraSCORE — Painel do Coordenador</span>
+  </a>
+  <div class="topbar-right">
+    <span class="pill" id="userEmail">—</span>
+    <a class="btn-link" href="restrito.html">← Área Restrita</a>
+    <button class="icon-btn" id="themeBtn" aria-label="Alternar tema">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
+    <button class="btn-link" id="logoutBtn">Sair</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="head">
+    <div class="label">Administração</div>
+    <h1>Controle, logs e auditoria</h1>
+    <p>Gerencie os acessos da equipe, monitore atividades e altere o coordenador do projeto. Esta área é exclusiva do coordenador do BraSCORE.</p>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="users">Usuários</button>
+    <button class="tab"        data-tab="coord">Coordenador</button>
+    <button class="tab"        data-tab="logs">Logs de acesso</button>
+    <button class="tab"        data-tab="audit">Auditoria</button>
+  </div>
+
+  <div id="content"></div>
+</div>
+
+<script src="auth.js"></script>
+<script>
+  // Tema
+  (function () {
+    const KEY = 'brascore.theme';
+    const saved = localStorage.getItem(KEY) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      localStorage.setItem(KEY, cur);
+    });
+  })();
+
+  // Acesso admin
+  const session = BraAuth.requireAdmin();
+  if (!session) { /* já redirecionou */ }
+  else document.getElementById('userEmail').textContent = session.email;
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    BraAuth.logout();
+    location.href = 'login.html';
+  });
+
+  // ===== Estatísticas =====
+  function refreshStats() {
+    const users = BraAuth.listUsers();
+    const logs  = BraAuth.getLogs();
+    const audit = BraAuth.getAudit();
+    const ativos = users.filter(u => u.active).length;
+    document.getElementById('stats').innerHTML = `
+      <div class="stat"><div class="v">${users.length}</div><div class="l">Usuários cadastrados</div></div>
+      <div class="stat"><div class="v">${ativos}</div><div class="l">Usuários ativos</div></div>
+      <div class="stat"><div class="v">${logs.length}</div><div class="l">Eventos de acesso</div></div>
+      <div class="stat"><div class="v">${audit.length}</div><div class="l">Registros de auditoria</div></div>
+    `;
+  }
+
+  // ===== Render por aba =====
+  const content = document.getElementById('content');
+  const tabBtns = document.querySelectorAll('.tab');
+
+  function setTab(name) {
+    tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    if (name === 'users') renderUsers();
+    if (name === 'coord') renderCoord();
+    if (name === 'logs')  renderLogs();
+    if (name === 'audit') renderAudit();
+    refreshStats();
+  }
+
+  tabBtns.forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function alertBox(id) {
+    return `<div class="alert" id="${id}"></div>`;
+  }
+  function showAlert(id, msg, kind) {
+    const el = document.getElementById(id);
+    el.className = 'alert ' + (kind || 'ok') + ' show';
+    el.textContent = msg;
+    setTimeout(() => el.classList.remove('show'), 4500);
+  }
+
+  // ===== Usuários =====
+  function renderUsers() {
+    content.innerHTML = `
+      <div class="card">
+        <h2>Adicionar usuário</h2>
+        <p class="sub">Cadastre um novo pesquisador. Quando o backend estiver ativo, ele receberá um e-mail de boas-vindas para definir senha.</p>
+        ${alertBox('uMsg')}
+        <div class="row">
+          <input id="uEmail" placeholder="email@instituicao.com" type="email">
+          <input id="uName"  placeholder="Nome completo">
+          <select id="uRole">
+            <option value="pesquisador">Pesquisador</option>
+            <option value="visitante">Visitante</option>
+          </select>
+          <button class="btn" id="uAdd">Adicionar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Usuários cadastrados</h2>
+        <p class="sub">Ative/desative ou remova acessos. O coordenador não pode ser removido (use a aba <em>Coordenador</em> para transferir o papel).</p>
+        <div class="filter-row">
+          <input id="uFilter" placeholder="Filtrar por e-mail, nome ou papel…">
+        </div>
+        <table>
+          <thead><tr><th>E-mail</th><th>Nome</th><th>Papel</th><th>Status</th><th>Cadastrado</th><th>Ações</th></tr></thead>
+          <tbody id="uTbody"></tbody>
+        </table>
+      </div>`;
+
+    document.getElementById('uAdd').addEventListener('click', () => {
+      const email = document.getElementById('uEmail').value.trim().toLowerCase();
+      const name  = document.getElementById('uName').value.trim();
+      const role  = document.getElementById('uRole').value;
+      if (!email.includes('@')) return showAlert('uMsg', 'E-mail inválido.', 'err');
+      const users = BraAuth.listUsers();
+      if (users.find(u => u.email.toLowerCase() === email)) return showAlert('uMsg', 'Esse e-mail já está cadastrado.', 'err');
+      users.push({ email, name: name || email.split('@')[0], role, createdAt: new Date().toISOString(), active: true });
+      localStorage.setItem('brascore.users', JSON.stringify(users));
+      BraAuth.audit('user.created', email, null, role);
+      document.getElementById('uEmail').value=''; document.getElementById('uName').value='';
+      showAlert('uMsg', 'Usuário adicionado com sucesso.', 'ok');
+      drawUsers();
+      refreshStats();
+    });
+
+    document.getElementById('uFilter').addEventListener('input', drawUsers);
+    drawUsers();
+  }
+
+  function drawUsers() {
+    const q = (document.getElementById('uFilter')?.value || '').toLowerCase();
+    const adminEmail = BraAuth.getAdminEmail().toLowerCase();
+    const users = BraAuth.listUsers()
+      .filter(u => !q || (u.email+u.name+u.role).toLowerCase().includes(q))
+      .sort((a,b) => (b.email===adminEmail ? 1 : 0) - (a.email===adminEmail ? 1 : 0));
+
+    const tbody = document.getElementById('uTbody');
+    if (!users.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum usuário encontrado.</td></tr>'; return; }
+    tbody.innerHTML = users.map(u => {
+      const isAdmin = u.email.toLowerCase() === adminEmail;
+      const role = isAdmin ? 'coordenador' : u.role;
+      return `
+        <tr>
+          <td><span class="mono">${esc(u.email)}</span></td>
+          <td>${esc(u.name)}</td>
+          <td><span class="role ${role}">${role}</span></td>
+          <td><span class="role ${u.active?'ativo':'inativo'}">${u.active?'ativo':'inativo'}</span></td>
+          <td>${new Date(u.createdAt).toLocaleDateString('pt-BR')}</td>
+          <td><div class="actions">
+            ${isAdmin ? '<span class="ic" style="cursor:default;opacity:.6">protegido</span>' :
+              `<button class="ic" data-act="toggle"  data-email="${esc(u.email)}">${u.active?'desativar':'ativar'}</button>
+               <button class="ic danger" data-act="remove" data-email="${esc(u.email)}">remover</button>`}
+          </div></td>
+        </tr>`;
+    }).join('');
+
+    tbody.querySelectorAll('button.ic').forEach(b => b.addEventListener('click', () => {
+      const email = b.dataset.email;
+      if (b.dataset.act === 'toggle') {
+        const u = BraAuth.listUsers().find(x => x.email === email);
+        BraAuth.setUserActive(email, !u.active);
+      } else if (b.dataset.act === 'remove') {
+        if (!confirm(`Remover o usuário ${email}? Esta ação será registrada na auditoria.`)) return;
+        BraAuth.removeUser(email);
+      }
+      drawUsers(); refreshStats();
+    }));
+  }
+
+  // ===== Coordenador =====
+  function renderCoord() {
+    const cur = BraAuth.getAdminEmail();
+    content.innerHTML = `
+      <div class="card">
+        <h2>Coordenador atual</h2>
+        <p class="sub">Apenas o coordenador acessa este painel. A transferência é registrada na auditoria e encerra a sessão atual por segurança.</p>
+        ${alertBox('cMsg')}
+        <p style="font-size:14px;margin:.5rem 0 1rem">E-mail atual: <strong class="mono" style="background:var(--light);padding:3px 8px;border-radius:6px">${esc(cur)}</strong></p>
+        <div class="row">
+          <input id="cNew" type="email" placeholder="novo.coordenador@instituicao.com" value="">
+          <button class="btn" id="cSave">Transferir coordenação</button>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:.8rem">
+          Dica: o novo coordenador deve ter usado o sistema ao menos uma vez (ou ser cadastrado na aba Usuários) para que reconheça o login.
+        </p>
+      </div>`;
+
+    document.getElementById('cSave').addEventListener('click', () => {
+      const v = document.getElementById('cNew').value.trim().toLowerCase();
+      if (!v.includes('@')) return showAlert('cMsg', 'E-mail inválido.', 'err');
+      if (v === cur.toLowerCase()) return showAlert('cMsg', 'O novo e-mail é igual ao atual.', 'err');
+      if (!confirm(`Transferir a coordenação para ${v}? Sua sessão atual será encerrada e o novo coordenador deverá entrar com esse e-mail.`)) return;
+      const r = BraAuth.setAdminEmail(v);
+      if (!r.ok) return showAlert('cMsg', r.msg, 'err');
+      alert('Coordenação transferida. Você será redirecionado para o login.');
+      location.href = 'login.html';
+    });
+  }
+
+  // ===== Logs =====
+  function renderLogs() {
+    content.innerHTML = `
+      <div class="card">
+        <h2>Logs de acesso</h2>
+        <p class="sub">Últimos 500 eventos (login, logout, abertura de arquivos). Atualizados em tempo real conforme os usuários navegam.</p>
+        <div class="filter-row">
+          <input id="lFilter" placeholder="Filtrar por usuário, tipo ou detalhe…">
+          <button class="btn btn-outline" id="lExport">Exportar CSV</button>
+          <button class="btn btn-outline" id="lClear">Limpar logs</button>
+        </div>
+        <div id="lList"></div>
+      </div>`;
+
+    document.getElementById('lExport').addEventListener('click', () => exportCSV('brascore_logs.csv', BraAuth.getLogs(), ['ts','type','user','detail']));
+    document.getElementById('lClear').addEventListener('click', () => {
+      if (!confirm('Limpar todos os logs? Esta ação é auditada.')) return;
+      BraAuth.clearLogs(); drawLogs(); refreshStats();
+    });
+    document.getElementById('lFilter').addEventListener('input', drawLogs);
+    drawLogs();
+  }
+
+  function drawLogs() {
+    const q = (document.getElementById('lFilter')?.value || '').toLowerCase();
+    const list = BraAuth.getLogs().filter(l => !q || (l.type+l.user+l.detail).toLowerCase().includes(q));
+    const el = document.getElementById('lList');
+    if (!list.length) { el.innerHTML = '<div class="empty">Nenhum evento registrado ainda.</div>'; return; }
+    el.innerHTML = list.map(l => `
+      <div class="log-row">
+        <span class="ts">${new Date(l.ts).toLocaleString('pt-BR')}</span>
+        <span class="ty ${l.type}">${esc(l.type)}</span>
+        <span class="det">${esc(l.detail)}</span>
+        <span class="who">${esc(l.user)}</span>
+      </div>`).join('');
+  }
+
+  // ===== Auditoria =====
+  function renderAudit() {
+    content.innerHTML = `
+      <div class="card">
+        <h2>Trilha de auditoria</h2>
+        <p class="sub">Registro imutável de alterações sensíveis (transferência de coordenação, criação/remoção/ativação de usuários, limpeza de logs).</p>
+        <div class="filter-row">
+          <input id="aFilter" placeholder="Filtrar por ação, alvo ou usuário…">
+          <button class="btn btn-outline" id="aExport">Exportar CSV</button>
+          <button class="btn btn-outline" id="aClear">Limpar auditoria</button>
+        </div>
+        <div id="aList"></div>
+      </div>`;
+
+    document.getElementById('aExport').addEventListener('click', () => exportCSV('brascore_auditoria.csv', BraAuth.getAudit(), ['ts','action','target','before','after','by']));
+    document.getElementById('aClear').addEventListener('click', () => {
+      if (!confirm('Limpar a trilha de auditoria? Esta ação NÃO pode ser desfeita.')) return;
+      BraAuth.clearAudit(); drawAudit(); refreshStats();
+    });
+    document.getElementById('aFilter').addEventListener('input', drawAudit);
+    drawAudit();
+  }
+
+  function drawAudit() {
+    const q = (document.getElementById('aFilter')?.value || '').toLowerCase();
+    const list = BraAuth.getAudit().filter(a => !q || (a.action+a.target+a.by+(a.before||'')+(a.after||'')).toLowerCase().includes(q));
+    const el = document.getElementById('aList');
+    if (!list.length) { el.innerHTML = '<div class="empty">Nenhum evento de auditoria.</div>'; return; }
+    el.innerHTML = list.map(a => `
+      <div class="audit-row">
+        <span class="ts">${new Date(a.ts).toLocaleString('pt-BR')}</span>
+        <span class="ac">${esc(a.action)}</span>
+        <span class="col" title="alvo">${esc(a.target)}</span>
+        <span class="col" title="antes → depois">${a.before!=null?esc(a.before):'—'} → ${a.after!=null?esc(a.after):'—'}</span>
+        <span class="by">${esc(a.by)}</span>
+      </div>`).join('');
+  }
+
+  // ===== CSV export =====
+  function exportCSV(filename, rows, fields) {
+    const esc2 = v => `"${String(v==null?'':v).replace(/"/g,'""')}"`;
+    const csv = [fields.join(',')].concat(rows.map(r => fields.map(f => esc2(r[f])).join(','))).join('\n');
+    const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  // Inicial
+  setTab('users');
+</script>
+</body>
+</html>

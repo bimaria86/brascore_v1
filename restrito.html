@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Área Restrita — BraSCORE</title>
+<link rel="icon" type="image/png" href="LOGO%20Final%20BraSCORE.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root, [data-theme="light"] {
+    --blue:#3B4FD8; --teal:#1D9E75;
+    --grad: linear-gradient(135deg,#5B3FD8 0%,#1D9E75 100%);
+    --dark:#111827; --mid:#374151; --muted:#6B7280;
+    --bg:#ffffff; --light:#F9FAFB; --border:#E5E7EB;
+    --card-bg:#ffffff; --input-bg:#F9FAFB;
+    --hover:#F3F4F6;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+    --sans:'IBM Plex Sans',sans-serif; --serif:'Lora',serif; --mono:'JetBrains Mono',monospace;
+  }
+  [data-theme="dark"] {
+    --blue:#7C8DF5; --teal:#34D399;
+    --grad: linear-gradient(135deg,#7C5FF5 0%,#34D399 100%);
+    --dark:#F1F5F9; --mid:#CBD5E1; --muted:#94A3B8;
+    --bg:#0B1220; --light:#111B2E; --border:#1F2A44;
+    --card-bg:#111B2E; --input-bg:#0B1220;
+    --hover:#1B2747;
+    --shadow:0 1px 3px rgba(0,0,0,.6),0 1px 2px rgba(0,0,0,.4);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:var(--bg);color:var(--dark);min-height:100vh;-webkit-font-smoothing:antialiased}
+  a{color:var(--blue);text-decoration:none}
+  a:hover{opacity:.85}
+
+  /* Topbar */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1.5rem;border-bottom:1px solid var(--border);background:var(--card-bg);position:sticky;top:0;z-index:50}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:600;color:var(--dark);font-size:1.05rem}
+  .brand img{height:30px;width:auto}
+  .topbar-right{display:flex;align-items:center;gap:.6rem}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;background:var(--light);border:1px solid var(--border);font-size:12px;color:var(--mid)}
+  .pill.admin{background:linear-gradient(135deg,#5B3FD8,#1D9E75);color:#fff;border-color:transparent}
+  .pill .dot{width:6px;height:6px;border-radius:50%;background:var(--teal)}
+  .icon-btn{background:var(--light);border:1px solid var(--border);width:34px;height:34px;border-radius:50%;cursor:pointer;color:var(--mid);display:inline-flex;align-items:center;justify-content:center}
+  .icon-btn:hover{color:var(--dark)}
+  .icon-btn svg{width:16px;height:16px}
+  [data-theme="light"] .icon-sun{display:none}
+  [data-theme="dark"]  .icon-moon{display:none}
+  .btn-link{font-size:12.5px;color:var(--mid);background:none;border:none;cursor:pointer;font-family:inherit;padding:6px 10px;border-radius:6px}
+  .btn-link:hover{background:var(--hover);color:var(--dark)}
+
+  /* Layout */
+  .layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 56px)}
+  aside{border-right:1px solid var(--border);background:var(--light);padding:1.2rem 0}
+  aside h4{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--sans);font-weight:600;padding:.5rem 1.5rem;margin-top:.8rem}
+  aside ul{list-style:none}
+  aside li{margin:0}
+  aside .nav-item{display:flex;align-items:center;gap:.7rem;padding:.7rem 1.5rem;color:var(--mid);font-size:13.5px;cursor:pointer;border-left:3px solid transparent;transition:background .15s,color .15s}
+  aside .nav-item:hover{background:var(--hover);color:var(--dark)}
+  aside .nav-item.active{background:var(--card-bg);color:var(--blue);border-left-color:var(--blue);font-weight:600}
+  aside .nav-item .ico{width:18px;height:18px;flex-shrink:0;opacity:.8}
+  aside .nav-item.disabled{cursor:not-allowed;opacity:.55}
+  aside .nav-item.disabled:hover{background:transparent;color:var(--mid)}
+  aside .badge{margin-left:auto;font-size:9.5px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:10px;background:var(--blue);color:#fff;text-transform:uppercase}
+  aside .badge.soon{background:#EF9F27;color:#633806}
+
+  main{padding:2rem 2.4rem 4rem;overflow-x:hidden}
+  .page-head{margin-bottom:1.6rem}
+  .page-head .label{display:inline-block;font-size:11px;font-weight:600;color:var(--blue);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.4rem}
+  .page-head h1{font-family:var(--serif);font-size:1.8rem;color:var(--dark);font-weight:600;margin-bottom:.3rem}
+  .page-head p{font-size:13.5px;color:var(--muted);line-height:1.6;max-width:680px}
+
+  /* Lista de arquivos */
+  .file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.9rem;margin-top:1.4rem}
+  .file{display:flex;align-items:flex-start;gap:.8rem;padding:1rem 1.1rem;border:1px solid var(--border);border-radius:10px;background:var(--card-bg);cursor:pointer;transition:border-color .15s,transform .15s,box-shadow .15s;text-align:left}
+  .file:hover{border-color:var(--blue);transform:translateY(-1px);box-shadow:var(--shadow)}
+  .file.active{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,79,216,.12)}
+  .file-icon{width:36px;height:36px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;letter-spacing:.04em}
+  .ic-pdf  { background:#DC2626 }
+  .ic-doc  { background:#2563EB }
+  .ic-md   { background:#7C3AED }
+  .ic-txt  { background:#0F766E }
+  .ic-vid  { background:#EA580C }
+  .file-body h4{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--dark);line-height:1.35;margin-bottom:.2rem}
+  .file-body p{font-size:11.5px;color:var(--muted);line-height:1.4;margin:0}
+
+  /* Visualizador */
+  .viewer-wrap{margin-top:2rem;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card-bg)}
+  .viewer-head{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.1rem;background:var(--light);border-bottom:1px solid var(--border)}
+  .viewer-head .vt{font-size:12.5px;color:var(--mid);font-weight:500}
+  .viewer-head .va{display:flex;gap:.4rem}
+  .viewer-head a{font-size:11.5px;color:var(--blue);font-weight:600;padding:5px 11px;border:1px solid var(--border);border-radius:6px;background:var(--card-bg)}
+  .viewer-head a:hover{background:var(--blue);color:#fff;opacity:1}
+  .viewer-body{height:78vh;min-height:520px;background:#1f1f1f}
+  .viewer-body iframe{width:100%;height:100%;border:0;background:#fff}
+  .viewer-text{background:var(--card-bg);height:78vh;min-height:520px;overflow:auto;padding:1.4rem 1.6rem;color:var(--dark);font-family:var(--mono);font-size:12.5px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+  .viewer-md{background:var(--card-bg);height:78vh;min-height:520px;overflow:auto;padding:1.6rem 2rem;color:var(--dark);line-height:1.7;font-size:14.5px}
+  .viewer-md h1,.viewer-md h2,.viewer-md h3{font-family:var(--serif);color:var(--dark);margin:1.2rem 0 .6rem}
+  .viewer-md h1{font-size:1.6rem;border-bottom:1px solid var(--border);padding-bottom:.4rem}
+  .viewer-md h2{font-size:1.25rem}
+  .viewer-md h3{font-size:1.05rem}
+  .viewer-md p,.viewer-md li{color:var(--mid);font-size:14px}
+  .viewer-md code{background:var(--light);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:12.5px}
+  .viewer-md pre{background:var(--light);padding:.8rem 1rem;border-radius:6px;overflow:auto;border:1px solid var(--border);margin:.8rem 0}
+  .viewer-md ul,.viewer-md ol{padding-left:1.4rem;margin:.6rem 0}
+  .viewer-md table{border-collapse:collapse;margin:.8rem 0;font-size:13px}
+  .viewer-md th,.viewer-md td{border:1px solid var(--border);padding:.4rem .7rem}
+  .viewer-md th{background:var(--light)}
+
+  .viewer-empty{display:flex;align-items:center;justify-content:center;height:78vh;min-height:520px;color:var(--muted);font-size:13px;text-align:center;padding:2rem}
+
+  /* "Em breve" */
+  .soon-card{background:var(--card-bg);border:1px dashed var(--border);border-radius:12px;padding:3rem 2rem;text-align:center;margin-top:1.6rem}
+  .soon-card .ico{font-size:36px;margin-bottom:.6rem;opacity:.6}
+  .soon-card h3{font-family:var(--serif);font-size:1.3rem;color:var(--dark);margin-bottom:.4rem}
+  .soon-card p{color:var(--muted);font-size:13.5px;max-width:520px;margin:.4rem auto 0;line-height:1.6}
+
+  /* Responsivo */
+  @media (max-width: 880px) {
+    .layout{grid-template-columns:1fr}
+    aside{border-right:none;border-bottom:1px solid var(--border);padding:.6rem 0}
+    aside h4{padding:.3rem 1rem}
+    aside ul{display:flex;flex-wrap:wrap;gap:.3rem;padding:.3rem 1rem}
+    aside .nav-item{padding:.5rem .9rem;border-left:none;border-radius:18px;border:1px solid var(--border)}
+    aside .nav-item.active{border-color:var(--blue)}
+    main{padding:1.4rem 1.2rem}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="brand" href="index.html">
+    <img src="LOGO Final BraSCORE.png" alt="BraSCORE">
+    <span>BraSCORE — Área Restrita</span>
+  </a>
+  <div class="topbar-right">
+    <span class="pill" id="userPill"><span class="dot"></span><span id="userEmail">—</span></span>
+    <a id="adminLink" class="pill admin" href="admin.html" style="display:none">Painel do Coordenador</a>
+    <button class="icon-btn" id="themeBtn" aria-label="Alternar tema" title="Modo claro/escuro">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
+    <button class="btn-link" id="logoutBtn">Sair</button>
+  </div>
+</div>
+
+<div class="layout">
+  <aside>
+    <h4>Conteúdo</h4>
+    <ul>
+      <li><div class="nav-item active" data-tab="docs">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+        Documentação técnica
+      </div></li>
+      <li><div class="nav-item" data-tab="manuais">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Manuais e formulários
+      </div></li>
+      <li><div class="nav-item" data-tab="termos">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
+        Termo de uso de dados
+      </div></li>
+      <li><div class="nav-item" data-tab="videos">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Vídeos e treinamentos
+      </div></li>
+    </ul>
+    <h4>Operação</h4>
+    <ul>
+      <li><div class="nav-item disabled" data-tab="dados">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v6c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 11v6c0 1.66 4.03 3 9 3s9-1.34 9-3v-6"/></svg>
+        Base de dados <span class="badge soon">em breve</span>
+      </div></li>
+    </ul>
+  </aside>
+
+  <main>
+    <div id="content"></div>
+  </main>
+</div>
+
+<script src="auth.js"></script>
+<script>
+  // ===== Tema =====
+  (function () {
+    const KEY = 'brascore.theme';
+    const saved = localStorage.getItem(KEY) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      localStorage.setItem(KEY, cur);
+    });
+  })();
+
+  // ===== Sessão =====
+  const session = BraAuth.requireAuth();
+  if (!session) { /* já redirecionou */ }
+  else {
+    document.getElementById('userEmail').textContent = session.email;
+    if (session.isAdmin) document.getElementById('adminLink').style.display = 'inline-flex';
+  }
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    BraAuth.logout();
+    location.href = 'login.html';
+  });
+
+  // ===== Catálogo de arquivos =====
+  const FILES_DIR = 'files/';
+  const enc = encodeURIComponent;
+  const path = name => FILES_DIR + enc(name).replace(/%2F/g, '/');
+
+  const CATALOG = {
+    docs: {
+      title: 'Documentação técnica',
+      label: 'Documentos do projeto',
+      desc: 'Documentação técnica do BraSCORE: arquitetura do registro, modelagem estatística, codebook completo e guia rápido executivo.',
+      items: [
+        { name: 'BRASCORE_DOCUMENTACAO_TECNICA.md', label: 'Documentação Técnica (completa)',  desc: 'Arquitetura, variáveis e modelagem',    type: 'md'  },
+        { name: 'GUIA_RAPIDO_EXECUTIVO.md',         label: 'Guia Rápido Executivo',              desc: 'Resumo gerencial do projeto',          type: 'md'  },
+        { name: 'BRASCORE_CODEBOOK_COMPLETO.txt',   label: 'Codebook completo',                  desc: 'Dicionário de dados (todas variáveis)',type: 'txt' },
+        { name: '2026_SBCCV_BraSCORE.pdf',          label: 'Apresentação SBCCV 2026',            desc: 'Material do 52º Congresso da SBCCV',   type: 'pdf', folder:'' },
+        { name: 'CABG-BraSCORE.pdf',                label: 'CABG-BraSCORE — publicação',          desc: 'Publicação técnica do projeto',        type: 'pdf', folder:'' },
+        { name: 'FIRSTREPORT_BRASCORE2025.pdf',     label: 'First Report — BraSCORE 2025',        desc: 'Relatório inicial 2025',               type: 'pdf', folder:'' }
+      ]
+    },
+    manuais: {
+      title: 'Manuais, lista de variáveis e formulários',
+      label: 'Operação dos centros',
+      desc: 'Material de apoio para os centros participantes: manuais de preenchimento, lista oficial de variáveis e formulários por módulo.',
+      items: [
+        { name: 'Manual de preenchimento de dados- Plataforma Cardux .pdf', label: 'Manual de preenchimento — Cardux', desc: 'Manual oficial da plataforma',          type: 'pdf' },
+        { name: '1.0 Formulário Geral (Atualizado).pdf',                    label: '1.0 Formulário Geral',             desc: 'Dados gerais do paciente',              type: 'pdf' },
+        { name: '1.1. Lesões coronarianas - Revascularização do miocárdio.pdf', label: '1.1 Lesões coronarianas / CRM', desc: 'Formulário cirúrgico',                  type: 'pdf' },
+        { name: '1.2. Cirurgia Valvar.pdf',                                 label: '1.2 Cirurgia Valvar',              desc: 'Formulário de cirurgia valvar',         type: 'pdf' },
+        { name: '2. Pós e seguimento.pdf',                                  label: '2. Pós-operatório e seguimento',    desc: 'Desfechos e acompanhamento',            type: 'pdf' },
+        { name: '1.1. Lista de variáveis.docx',                             label: '1.1 Lista de variáveis',           desc: 'Lista oficial de variáveis (DOCX)',     type: 'doc' }
+      ]
+    },
+    termos: {
+      title: 'Termo de uso de dados',
+      label: 'Compliance',
+      desc: 'Termo de uso de dados do BraSCORE — princípios LGPD, deveres dos pesquisadores e regras de uso da base.',
+      items: [
+        { name: 'Termos de uso.docx', label: 'Termo de uso de dados', desc: 'Documento oficial — leia antes de solicitar acesso', type: 'doc' }
+      ]
+    },
+    videos: {
+      title: 'Vídeos e treinamentos',
+      label: 'Capacitação',
+      desc: 'Agenda de reuniões com links das gravações de treinamento, alinhamentos e webinars do BraSCORE.',
+      items: [
+        { name: 'Agenda BraSCORE - links gravados.pdf', label: 'Agenda — links das gravações', desc: 'Lista de reuniões e links de vídeo',  type: 'pdf' }
+      ]
+    },
+    dados: {
+      title: 'Base de dados',
+      label: 'Operação',
+      desc: 'Upload e download das planilhas de dados dos centros participantes.',
+      items: [],
+      soon: true
+    }
+  };
+
+  // ===== Render =====
+  const tabs = document.querySelectorAll('aside .nav-item');
+  const content = document.getElementById('content');
+
+  function fileIconClass(t) { return ({pdf:'ic-pdf', doc:'ic-doc', md:'ic-md', txt:'ic-txt', vid:'ic-vid'})[t] || 'ic-pdf'; }
+  function fileIconLabel(t) { return ({pdf:'PDF', doc:'DOC', md:'MD', txt:'TXT', vid:'VID'})[t] || 'DOC'; }
+
+  function buildFileUrl(it) {
+    // Arquivos vivem em /files/ por padrão; alguns docs gerais (folder:'') ficam na raiz
+    const dir = (it.folder === '') ? '' : FILES_DIR;
+    return dir + enc(it.name).replace(/%2F/g, '/');
+  }
+
+  function renderTab(key) {
+    const cat = CATALOG[key];
+    if (!cat) return;
+
+    let html = `
+      <div class="page-head">
+        <div class="label">${cat.label}</div>
+        <h1>${cat.title}</h1>
+        <p>${cat.desc}</p>
+      </div>`;
+
+    if (cat.soon) {
+      html += `
+        <div class="soon-card">
+          <div class="ico">⏳</div>
+          <h3>Em breve</h3>
+          <p>O módulo de <strong>Base de dados</strong> permitirá upload e download seguro das planilhas dos centros participantes. Será liberado assim que o servidor de dados do BraSCORE entrar em operação.</p>
+          <p style="margin-top:.6rem;font-size:12.5px">Pesquisadores responsáveis receberão um aviso por e-mail no momento da liberação.</p>
+        </div>`;
+      content.innerHTML = html;
+      return;
+    }
+
+    html += `<div class="file-grid" id="grid"></div>
+             <div class="viewer-wrap" id="viewerWrap" style="display:none">
+               <div class="viewer-head">
+                 <span class="vt" id="vt">—</span>
+                 <span class="va">
+                   <a id="vDownload" href="#" download>Baixar</a>
+                   <a id="vOpen"     href="#" target="_blank" rel="noopener">Abrir em nova aba</a>
+                 </span>
+               </div>
+               <div id="vBody" class="viewer-body"></div>
+             </div>`;
+
+    content.innerHTML = html;
+    const grid = document.getElementById('grid');
+    cat.items.forEach((it, i) => {
+      const url = buildFileUrl(it);
+      const btn = document.createElement('button');
+      btn.className = 'file';
+      btn.innerHTML = `
+        <div class="file-icon ${fileIconClass(it.type)}">${fileIconLabel(it.type)}</div>
+        <div class="file-body">
+          <h4>${it.label}</h4>
+          <p>${it.desc}</p>
+        </div>`;
+      btn.addEventListener('click', () => openFile(it, url, btn));
+      grid.appendChild(btn);
+    });
+  }
+
+  function openFile(it, url, btn) {
+    document.querySelectorAll('.file').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const wrap = document.getElementById('viewerWrap');
+    const body = document.getElementById('vBody');
+    document.getElementById('vt').textContent = it.label;
+    document.getElementById('vDownload').href = url;
+    document.getElementById('vOpen').href     = url;
+    wrap.style.display = 'block';
+
+    BraAuth.log('file.opened', it.name);
+
+    if (it.type === 'pdf') {
+      body.className = 'viewer-body';
+      body.innerHTML = `<iframe src="${url}" title="${it.label}"></iframe>`;
+    }
+    else if (it.type === 'txt') {
+      body.className = 'viewer-text';
+      body.textContent = 'Carregando…';
+      fetch(url).then(r => r.text()).then(t => { body.textContent = t; })
+        .catch(() => { body.textContent = 'Não foi possível carregar o arquivo. Use "Baixar".'; });
+    }
+    else if (it.type === 'md') {
+      body.className = 'viewer-md';
+      body.innerHTML = '<p style="color:var(--muted)">Carregando…</p>';
+      fetch(url).then(r => r.text()).then(t => { body.innerHTML = mdToHtml(t); })
+        .catch(() => { body.innerHTML = '<p>Não foi possível carregar o documento. Use "Baixar".</p>'; });
+    }
+    else if (it.type === 'doc') {
+      body.className = 'viewer-empty';
+      body.innerHTML = `
+        <div>
+          <div style="font-size:36px;margin-bottom:.6rem">📄</div>
+          <h3 style="font-family:var(--serif);font-size:1.2rem;margin-bottom:.4rem">${it.label}</h3>
+          <p style="max-width:440px;margin:0 auto;font-size:13px;line-height:1.6">
+            Documentos do Word (.docx) não têm pré-visualização nativa no navegador.
+            Use os botões acima para <strong>baixar</strong> o arquivo ou abri-lo em nova aba (o navegador fará o download).
+          </p>
+        </div>`;
+    }
+
+    body.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  // Markdown mínimo (cabeçalhos, negrito, itálico, código, listas, links, parágrafos)
+  function mdToHtml(md) {
+    const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    // blocos de código
+    md = md.replace(/```([\s\S]*?)```/g, (_, c) => '<pre><code>' + esc(c) + '</code></pre>');
+    const lines = md.split(/\r?\n/);
+    let html = '', inList = false, inOL = false;
+    const flushList = () => {
+      if (inList) { html += '</ul>'; inList = false; }
+      if (inOL)   { html += '</ol>'; inOL   = false; }
+    };
+    for (let raw of lines) {
+      if (/^\s*$/.test(raw)) { flushList(); html += ''; continue; }
+      const h = raw.match(/^(#{1,3})\s+(.*)$/);
+      if (h) { flushList(); html += `<h${h[1].length}>${inline(esc(h[2]))}</h${h[1].length}>`; continue; }
+      const ul = raw.match(/^\s*[-*]\s+(.*)$/);
+      if (ul) { if (!inList) { flushList(); html += '<ul>'; inList = true; } html += `<li>${inline(esc(ul[1]))}</li>`; continue; }
+      const ol = raw.match(/^\s*\d+\.\s+(.*)$/);
+      if (ol) { if (!inOL) { flushList(); html += '<ol>'; inOL = true; } html += `<li>${inline(esc(ol[1]))}</li>`; continue; }
+      if (raw.startsWith('<pre>')) { flushList(); html += raw; continue; }
+      flushList();
+      html += `<p>${inline(esc(raw))}</p>`;
+    }
+    flushList();
+    return html;
+
+    function inline(s) {
+      return s
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    }
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => {
+    if (t.classList.contains('disabled')) { renderTab('dados'); document.querySelectorAll('aside .nav-item').forEach(x => x.classList.remove('active')); t.classList.add('active'); return; }
+    tabs.forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    renderTab(t.dataset.tab);
+  }));
+
+  renderTab('docs');
+</script>
+</body>
+</html>
