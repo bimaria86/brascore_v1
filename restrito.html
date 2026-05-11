@@ -59,8 +59,9 @@
   aside .nav-item:hover{background:var(--hover);color:var(--dark)}
   aside .nav-item.active{background:var(--card-bg);color:var(--blue);border-left-color:var(--blue);font-weight:600}
   aside .nav-item .ico{width:18px;height:18px;flex-shrink:0;opacity:.8}
-  aside .nav-item.disabled{cursor:not-allowed;opacity:.55}
-  aside .nav-item.disabled:hover{background:transparent;color:var(--mid)}
+  aside .nav-item.disabled{opacity:.7}
+  aside .nav-item.disabled:hover{background:var(--hover);color:var(--mid)}
+  aside .nav-item.disabled.active{color:var(--muted);font-weight:500}
   aside .badge{margin-left:auto;font-size:9.5px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:10px;background:var(--blue);color:#fff;text-transform:uppercase}
   aside .badge.soon{background:#EF9F27;color:#633806}
 
@@ -172,6 +173,14 @@
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v6c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 11v6c0 1.66 4.03 3 9 3s9-1.34 9-3v-6"/></svg>
         Base de dados <span class="badge soon">em breve</span>
       </div></li>
+      <li><div class="nav-item disabled" data-tab="relatorios">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+        Relatórios <span class="badge soon">em breve</span>
+      </div></li>
+      <li><div class="nav-item disabled" data-tab="auditoria">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Auditoria de qualidade <span class="badge soon">em breve</span>
+      </div></li>
     </ul>
   </aside>
 
@@ -258,8 +267,22 @@
       title: 'Base de dados',
       label: 'Operação',
       desc: 'Upload e download das planilhas de dados dos centros participantes.',
-      items: [],
-      soon: true
+      items: [], soon: true,
+      soonText: 'O módulo de <strong>Base de dados</strong> permitirá upload e download seguro das planilhas dos centros participantes. Será liberado assim que o servidor de dados do BraSCORE entrar em operação. Pesquisadores responsáveis receberão um aviso por e-mail no momento da liberação.'
+    },
+    relatorios: {
+      title: 'Relatórios',
+      label: 'Operação',
+      desc: 'Relatórios consolidados de produtividade dos centros, perfil clínico-cirúrgico, desfechos e indicadores de qualidade.',
+      items: [], soon: true,
+      soonText: 'O módulo de <strong>Relatórios</strong> trará paineis consolidados por centro e nacional: produtividade (casos por mês), perfil clínico-cirúrgico, desfechos primários/secundários e benchmarking entre centros. Será liberado em conjunto com a base de dados ativa.'
+    },
+    auditoria: {
+      title: 'Auditoria de qualidade',
+      label: 'Operação',
+      desc: 'Verificação automatizada de qualidade dos dados: completude, consistência, plausibilidade e identificação de outliers.',
+      items: [], soon: true,
+      soonText: 'O módulo de <strong>Auditoria de qualidade</strong> executará verificações automáticas nas planilhas submetidas: regras de completude, consistência inter-campos, plausibilidade fisiológica e detecção de outliers. Cada centro receberá um relatório por submissão com pontos a corrigir.'
     }
   };
 
@@ -292,8 +315,7 @@
         <div class="soon-card">
           <div class="ico">⏳</div>
           <h3>Em breve</h3>
-          <p>O módulo de <strong>Base de dados</strong> permitirá upload e download seguro das planilhas dos centros participantes. Será liberado assim que o servidor de dados do BraSCORE entrar em operação.</p>
-          <p style="margin-top:.6rem;font-size:12.5px">Pesquisadores responsáveis receberão um aviso por e-mail no momento da liberação.</p>
+          <p>${cat.soonText || 'Módulo será liberado quando o servidor de dados entrar em operação.'}</p>
         </div>`;
       content.innerHTML = html;
       return;
@@ -409,7 +431,6 @@
   }
 
   tabs.forEach(t => t.addEventListener('click', () => {
-    if (t.classList.contains('disabled')) { renderTab('dados'); document.querySelectorAll('aside .nav-item').forEach(x => x.classList.remove('active')); t.classList.add('active'); return; }
     tabs.forEach(x => x.classList.remove('active'));
     t.classList.add('active');
     renderTab(t.dataset.tab);

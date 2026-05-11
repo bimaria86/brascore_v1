@@ -242,8 +242,12 @@
   function renderUsers() {
     content.innerHTML = `
       <div class="card">
-        <h2>Adicionar usuário</h2>
-        <p class="sub">Cadastre um novo pesquisador. Quando o backend estiver ativo, ele receberá um e-mail de boas-vindas para definir senha.</p>
+        <h2>Adicionar usuário (temporário)</h2>
+        <p class="sub">
+          Cadastre um pesquisador <strong>apenas neste navegador</strong> — útil para testes ou demonstrações.
+          Para autorização permanente (válida em qualquer navegador), o e-mail precisa ser incluído na lista oficial
+          do arquivo <code style="background:var(--light);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:12px">auth.js</code> e versionada no Git.
+        </p>
         ${alertBox('uMsg')}
         <div class="row">
           <input id="uEmail" placeholder="email@instituicao.com" type="email">
@@ -258,12 +262,16 @@
 
       <div class="card">
         <h2>Usuários cadastrados</h2>
-        <p class="sub">Ative/desative ou remova acessos. O coordenador não pode ser removido (use a aba <em>Coordenador</em> para transferir o papel).</p>
+        <p class="sub">
+          A coluna <strong>Origem</strong> mostra se o usuário vem da lista oficial (<em>whitelist</em>, no código)
+          ou foi adicionado pelo painel (<em>local</em>, só neste navegador). Usuários da whitelist podem ser
+          desativados aqui, mas só serão removidos definitivamente alterando o <code>auth.js</code>.
+        </p>
         <div class="filter-row">
-          <input id="uFilter" placeholder="Filtrar por e-mail, nome ou papel…">
+          <input id="uFilter" placeholder="Filtrar por e-mail, nome, papel ou origem…">
         </div>
         <table>
-          <thead><tr><th>E-mail</th><th>Nome</th><th>Papel</th><th>Status</th><th>Cadastrado</th><th>Ações</th></tr></thead>
+          <thead><tr><th>E-mail</th><th>Nome</th><th>Papel</th><th>Origem</th><th>Status</th><th>Cadastrado</th><th>Ações</th></tr></thead>
           <tbody id="uTbody"></tbody>
         </table>
       </div>`;
@@ -272,16 +280,11 @@
       const email = document.getElementById('uEmail').value.trim().toLowerCase();
       const name  = document.getElementById('uName').value.trim();
       const role  = document.getElementById('uRole').value;
-      if (!email.includes('@')) return showAlert('uMsg', 'E-mail inválido.', 'err');
-      const users = BraAuth.listUsers();
-      if (users.find(u => u.email.toLowerCase() === email)) return showAlert('uMsg', 'Esse e-mail já está cadastrado.', 'err');
-      users.push({ email, name: name || email.split('@')[0], role, createdAt: new Date().toISOString(), active: true });
-      localStorage.setItem('brascore.users', JSON.stringify(users));
-      BraAuth.audit('user.created', email, null, role);
+      const r = BraAuth.addUser(email, name, role);
+      if (!r.ok) return showAlert('uMsg', r.msg, 'err');
       document.getElementById('uEmail').value=''; document.getElementById('uName').value='';
-      showAlert('uMsg', 'Usuário adicionado com sucesso.', 'ok');
-      drawUsers();
-      refreshStats();
+      showAlert('uMsg', 'Usuário adicionado (apenas neste navegador). Para acesso permanente, peça inclusão na whitelist do auth.js.', 'ok');
+      drawUsers(); refreshStats();
     });
 
     document.getElementById('uFilter').addEventListener('input', drawUsers);
